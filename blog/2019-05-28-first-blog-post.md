@@ -5,7 +5,7 @@ authors:
   name: Allen
   title: Docusaurus Core Team
   url: https://github.com/wgao19
-  image_url: https://github.com/wgao19.png
+  image_url: https://avatars.githubusercontent.com/u/138431030?s=96&v=40
 tags: [hola, docusaurus]
 ---
 
