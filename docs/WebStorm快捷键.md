@@ -12,3 +12,9 @@ title: WebStorm快捷键
 :::
 ![alt text](/img/doublectrl.png)
 
+#### ⌥ 键
+
+:::tip
+按着⌥ (option)键，点击鼠标可以开启多光标编辑
+:::
+
