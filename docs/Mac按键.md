@@ -1,6 +1,6 @@
 ---
 slug: mac
-title: Mac 按键
+title: Mac键
 ---
 
 ### Mac🍎键盘⌨️
