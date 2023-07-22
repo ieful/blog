@@ -4,7 +4,7 @@ title: JavaScript的不同格式类型
 authors: Allen
 tags: [UMD, AMD, CJS, ESModule, IIFE]
 ---
-参考：[What Are CJS, AMD, UMD, ESM, System, and IIFE?]('https://betterprogramming.pub/what-are-cjs-amd-umd-esm-system-and-iife-3633a112db62')
+参考：https://betterprogramming.pub/what-are-cjs-amd-umd-esm-system-and-iife-3633a112db62
 
 ### 格式类型
 
@@ -15,7 +15,7 @@ tags: [UMD, AMD, CJS, ESModule, IIFE]
 * umd (Universal Module Definition ~ 通用模块定义) amd、cjs、iife都支持
 * es (ESModule) 标准的es6模块化规范，适用于支持es6模块的打包器以及支持 `<script type=module>` 的现代浏览器
 * iife (Immediately Invoked Function Expression) 自执行函数格式，适用于直接通过 `<script>` 标签引入
-* system SystemJS加载器的的本机格式 [SystemJS]('https://github.com/systemjs/systemjs')
+* system SystemJS加载器的的本机格式 https://github.com/systemjs/systemjs
 
 
 ### CommonJS (CJS)
@@ -280,7 +280,7 @@ import 'lodash';
 :::caution
 注意⚠️:上面这种情况很多人分不清，网上也很多人理解成 export default的情况，`import 'lodash` 和 `import lodash from 'lodash'` 、`import _ from 'lodash'`
 是完全不同的意思，后者很好理解，就是将lodash库引入进来并赋值为`lodash` `_` 变量，而 `import 'lodash` 仅仅只是执行了loadash模块，并没有输入任何值！
-网上[这里]('https://segmentfault.com/q/1010000006229052')有个例子
+网上这里有个例子: https://segmentfault.com/q/1010000006229052
 ![alt text](/img/meteor.png)
 和 css 里 @import xxx.css 类似的功能，`import lodash` 只是把 lodash 这个模块当做静态文件在编译阶段引入而已。。。。
 另：ES6 想要 import 一个模块中的变量等内容必须对其做模块解构，否则只会执行代码而没有任何导入的内容。这个道理跟 Node.js 中的模块没有 export 内容就 require 就只会执行代码不会导入内容是一个道理
