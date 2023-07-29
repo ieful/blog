@@ -6,8 +6,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'xiaoyu.work',
+  tagline: 'record my work & life😉',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -75,6 +75,12 @@ const config = {
             sidebarId: 'tipsSidebar',
             position: 'left',
             label: 'Tips',
+          },
+          {
+            type: 'docSidebar',
+            sidebarId: 'readSidebar', // 读书目录
+            position: 'left',
+            label: 'Read'
           },
           {to: '/blog', label: 'Blog', position: 'left'},
           {
