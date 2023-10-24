@@ -74,20 +74,20 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'tipsSidebar',
             position: 'left',
-            label: 'Tips',
+            label: '知识碎片',
           },
           {
             type: 'docSidebar',
             sidebarId: 'readSidebar', // 读书目录
             position: 'left',
-            label: 'Read'
+            label: '阅读（同步中...）'
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
-          {
-            href: 'https://github.com/facebook/docusaurus',
-            label: 'GitHub',
-            position: 'right',
-          },
+          {to: '/blog', label: '博客', position: 'left'},
+          // {
+          //   href: 'https://github.com/facebook/docusaurus',
+          //   label: 'GitHub',
+          //   position: 'right',
+          // },
         ],
       },
       footer: {

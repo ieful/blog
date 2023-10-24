@@ -1,6 +1,7 @@
 ---
 slug: mac
 title: Mac 按键
+hide: true
 ---
 
 ### Mac🍎键盘⌨️
