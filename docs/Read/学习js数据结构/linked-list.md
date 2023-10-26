@@ -33,3 +33,38 @@ function LinkedList() {
     }
 }
 ```
+
+
+```javascript
+// 用类的方式实现
+
+// 首先要有一个node类
+class Node {
+    constructor(element) {
+        this.element = element;
+        this.next = null;
+    }
+}
+
+
+class LinkedList {
+    constructor() {
+        this.size = 0;
+        this.head = null;
+    }
+    
+    // 实现append方法
+    append(node) {
+        if (this.head === null) {
+            this.head = node
+        } else {
+            let current = this.head;
+            if (current.next) {
+                current = current.next
+            }
+            current.next = node
+        }
+        this.size++
+    }
+}
+```
