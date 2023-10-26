@@ -68,3 +68,18 @@ class LinkedList {
     }
 }
 ```
+
+```javascript
+// 翻转单链表
+function reverseLinkedList(head) {
+    let current = head;
+    let pre = null;
+    while(current) {
+        const next = current.next;
+        current.next = pre;
+        pre = current;
+        current = next;
+    }
+    return pre;
+}
+```

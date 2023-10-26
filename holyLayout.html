@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>圣杯布局</title>
+    <style>
+        #content {
+            padding-left: 300px;
+            padding-right: 200px;
+        }
+        #content .column {
+            float: left;
+        }
+        #content #center {
+            background-color: red;
+            width: 100%;
+        }
+        #content #left {
+            position: relative;
+            left: -300px;
+            background-color: orange;
+            width: 300px;
+            margin-left: -100%;
+        }
+        #content #right {
+            background-color: green;
+            width: 200px;
+            margin-right: -200px;
+        }
+    </style>
+</head>
+<body>
+    <header>实现圣杯布局</header>
+    <div id="content">
+        <div id="center" class="column">center</div>
+        <div id="left" class="column">left</div>
+        <div id="right" class="column">right</div>
+    </div>
+</body>
+</html>
