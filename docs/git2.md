@@ -1,5 +1,5 @@
 ---
-slug: git
+slug: git2
 title: Git基础
 ---
 
