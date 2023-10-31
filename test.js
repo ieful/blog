@@ -117,3 +117,24 @@ describe('test mySetTimeout', () => {
 
     });
 });
+
+
+
+// 翻转单链表
+// 思路就是用中间值不断的轮换
+function reverseList(head) {
+    if (!head.next) {
+        return head
+    }
+    let pre = null;
+    let curr = head;
+    while (curr) {
+        let next = curr.next;
+        curr.next = pre;
+        pre = curr;
+        curr = next;
+    }
+    return pre
+}
+
+

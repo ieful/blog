@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #modal {
+            margin: 0 auto;
+            background-color: #2d66c3;
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -50px;
+            margin-top: -50px;
+        }
+    </style>
+</head>
+<body>
+    <div id="modal">模态框</div>
+</body>
+    <script>
+        window.onload = function () {
+            var dragging = false
+            var position = null
+            let target = document.getElementById('modal');
+            target.addEventListener('mousedown',function(e){
+                dragging = true
+                position = [e.clientX, e.clientY]
+            })
+
+
+            document.addEventListener('mousemove', function(e){
+                if(dragging === false){return}
+                console.log('hi')
+                const x = e.clientX
+                const y = e.clientY
+                const deltaX = x - position[0]
+                const deltaY = y - position[1]
+                const left = parseInt(target.style.left || 0)
+                const top = parseInt(target.style.top || 0)
+                target.style.left = left + deltaX + 'px'
+                target.style.top = top + deltaY + 'px'
+                position = [x, y]
+            })
+            document.addEventListener('mouseup', function(e){
+                dragging = false
+            })
+        }
+    </script>
+</html>
