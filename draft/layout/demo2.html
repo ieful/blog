@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>左右布局2</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .wrapper {
+            height: 100%;
+            overflow: hidden;
+        }
+        .wrapper .left {
+            width: 200px;
+            height: 100%;
+            background-color: red;
+            float: left;
+        }
+        .wrapper .right {
+            background-color: blue;
+            height: 100%;
+            margin-left: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="left">left</div>
+        <div class="right">right</div>
+    </div>
+</body>
+</html>

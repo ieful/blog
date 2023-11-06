@@ -5,25 +5,37 @@ title: promise
 
 ### 实现一个Promise
 
-```javascript
-
-class myPromise {
-    const Pending = 'pending';
-    const Fulfilled = 'fulfilled';
-    const Rejected = 'rejected';
-    constructor(func) {
-        func(this.resolve, this.reject);
-    }
+```ecmascript 6
+let p1 = new Promise((resolve, reject) => {
     
-    resolve() {
-        if (this.status === 'pending') {
-            this.status = fulfilled;
+})
+
+// 实现一个promise
+        class myPromise {
+        constructor(executor) {
+            this.state = 'pending';
+            this.value = undefined;
+            try {
+                executor(this._resolve.bind(this), this._reject.bind(this))
+            } catch (error) {
+                this._reject(error)
+            }
+        }
+        _resolve(data) {
+            if (this.state === 'pending') {
+                this.state = 'fulfiled';
+                this.value = data;
+            }
+        }
+        
+        _reject(reason) {
+            if (this.state === 'pending') {
+                this.state = 'rejected';
+                this.value = reason;
+            }
+        }
+        then() {
+            
         }
     }
-    reject() {
-        if (this.status === 'pending') {
-            this.status = rejected;
-        }
-    }
-}
 ```

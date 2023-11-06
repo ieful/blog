@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>右侧固定宽度</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        .wrapper {
+            height: 100%;
+        }
+        .wrapper .left {
+            background-color: #00d600;
+            height: 300px;
+            float: left;
+            width: 100%;
+            margin-right: -300px;
+        }
+        .wrapper .right {
+            width: 200px;
+            height: 300px;
+            float: right;
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="left">left</div>
+        <div class="right">right</div>
+    </div>
+</body>
+</html>
