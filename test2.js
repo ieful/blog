@@ -48,3 +48,13 @@ new Promise((resolve) => {
 })
 
 console.log('script end');
+
+
+new Promise((resolve) => {
+    console.log('new promise');
+    resolve();
+}).then(() => {
+    console.log('async2 end');
+}).then(() => {
+    console.log('async1 end');
+})

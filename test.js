@@ -138,9 +138,11 @@ function reverseList(head) {
 }
 
 
-async function sleep() {
-    await new Promise(() => {
-
+function sleep(time) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve();
+        }, time)
     })
 }
 
