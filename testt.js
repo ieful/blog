@@ -8,23 +8,44 @@
 //
 // 1 <= n <= 8
 
-function main(n) {
-    let result = [];
-    toolFn('', result, n, n);
-    return result;
+// function main(n) {
+//     let result = [];
+//     toolFn('', result, n, n);
+//     return result;
+// }
+// function toolFn(substr, resArr, left, right) {
+//     if (left === 0 && right === 0) {
+//         resArr.push(substr)
+//     }
+//
+//     if (left > 0) {
+//         toolFn(substr + '(', resArr, left - 1, right);
+//     }
+//     if (right > left) {
+//         toolFn(substr + ')', resArr, left, right - 1);
+//     }
+// }
+//
+// console.log(main(3))
+
+
+// let p = new Promise((resolve, reject) => {
+//     console.log('a');
+//     resolve();
+//     setTimeout(() => {
+//         console.log('c')
+//     })
+// }).then(() => {
+//     console.log('b')
+// })
+//
+// console.log('d')
+
+function Test() {
+    this.a = 'hhh'
+    return 5
 }
-function toolFn(substr, resArr, left, right) {
-    if (left === 0 && right === 0) {
-        resArr.push(substr)
-    }
 
-    if (left > 0) {
-        toolFn(substr + '(', resArr, left - 1, right);
-    }
-    if (right > left) {
-        toolFn(substr + ')', resArr, left, right - 1);
-    }
-}
+let test = new Test();
 
-console.log(main(3))
-
+console.log(test)
