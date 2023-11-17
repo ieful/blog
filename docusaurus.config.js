@@ -147,7 +147,7 @@ const config = {
         // Public API key: it is safe to commit it
         apiKey: '6acbd1c196082a2aa09dcd28a8523ecf',
 
-        indexName: 'bind',
+        indexName: 'xiaoyu',
 
         // Optional: see doc section below
         contextualSearch: true,
