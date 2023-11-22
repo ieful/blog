@@ -1,6 +1,6 @@
 ---
-slug: ascii
 title: ASCII码表
+sidebar_position: 20
 ---
 
 ### 认识几种编码
