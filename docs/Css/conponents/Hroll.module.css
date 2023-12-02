@@ -4,7 +4,7 @@
     overflow: hidden;
     margin-bottom: 15px;
 }
-.wrapper ::before {
+.wrapper::before {
     position: absolute;
     content: "";
     height: 200px;
@@ -16,7 +16,7 @@
     background: linear-gradient(90deg,#fff,hsla(0,0%,100%,0));
 }
 
-.wrapper ::after {
+.wrapper::after {
     position: absolute;
     content: "";
     height: 200px;
