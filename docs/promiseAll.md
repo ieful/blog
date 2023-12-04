@@ -4,7 +4,7 @@ title: 实现一个promise.all
 
 
 ```javascript
-    function myPromiseAll(promiseArr) {
+function myPromiseAll(promiseArr) {
     if (!Array.isArray(promiseArr)) {
         throw new Error('参数需要为一个promise数组')
     }
