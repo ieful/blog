@@ -101,6 +101,9 @@ import greeting from './foo.js'
 ```js
 export const greeting = (name)=> console.log(`Hello! ${name}`)
 export const greeting_VIP = (name)=> console.log(`Hello! ${name}. You are VIP`)
+
+// 或者也可以
+export { greeting, greeting_VIP };
 ```
 
 **导入**
