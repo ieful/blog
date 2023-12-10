@@ -119,7 +119,78 @@ Content-Type 既可以出现在请求头中，也可以出现在响应头中。�
 
 6、**responseType: 'stream'** 用于将响应数据以**Node.js** 可读流的形式返回。这种形式对于处理大型响应数据或实时数据流非常有用！
 
+### FileReader
 
+**FileReader** 对象允许Web应用程序异步读取存储在用户计算机上的文件（或原始数据缓存区）的内容，使用**File** 或者**Blob** 对象指定要读取的文件或数据。
+
+其中 File 对象可以是来自用户在一个input元素上选择文件后返回的FileList对象，也可以来自拖放操作生成的 DataTransfer对象，还可以是来自在一个HTMLCanvasElement上执行mozGetAsFile()方法后返回结果。
+
+:::info
+File对象可以看作一种特殊的Blob对象. Blob是File的父类。
+:::
+
+#### 方法
+
+1、FileReader.readAsArrayBuffer(): 开始读取指定的 Blob中的内容，一旦完成，result 属性中保存的将是被读取文件的 ArrayBuffer 数据对象。
+
+2、FileReader.readAsDataURL(): 开始读取指定的Blob中的内容。一旦完成，result属性中将包含一个data: URL 格式的 Base64 字符串以表示所读取文件的内容。
+
+3、FileReader.readAsText(): 开始读取指定的Blob中的内容。一旦完成，result属性中将包含一个字符串以表示所读取的文件内容。
+
+:::tip
+当我们需要读取一个文件的时候，如果是文本文件我们就可以通过 let fr = new FileReader(); fr.readAsText('文件') 方法来读取文件内容；
+而当文件是一个二进制文件的时候，我们就可以通过fr.readAsArrayBuffer('文件')来读取文件内容。
+:::
+
+```javascript
+// 读取文本文件：
+
+    // 创建 FileReader 对象
+    const reader = new FileReader();
+
+    // 为 FileReader 设置 onload 事件处理程序
+    reader.onload = function(event) {
+      // event.target.result 包含文件的文本内容
+      console.log(event.target.result);
+    };
+
+    // 读取文本文件
+    const fileInput = document.getElementById('fileInput'); // 假设有一个 input 元素用于选择文件
+    const selectedFile = fileInput.files[0];
+    reader.readAsText(selectedFile);
+
+// 读取图像文件并显示：
+
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+      // event.target.result 包含图像文件的 data URL
+      const imgElement = document.getElementById('imageElement'); // 假设有一个 img 元素用于显示图像
+      imgElement.src = event.target.result;
+    };
+
+    const fileInput = document.getElementById('fileInput'); // 假设有一个 input 元素用于选择文件
+    const selectedFile = fileInput.files[0];
+    reader.readAsDataURL(selectedFile);
+
+// 读取二进制文件（例如，ArrayBuffer）：
+
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+      // event.target.result 包含二进制文件的 ArrayBuffer
+      const arrayBuffer = event.target.result;
+      // 处理 ArrayBuffer
+    };
+
+    const fileInput = document.getElementById('fileInput'); // 假设有一个 input 元素用于选择文件
+    const selectedFile = fileInput.files[0];
+    reader.readAsArrayBuffer(selectedFile);
+```
+
+:::caution
+需要注意的是，由于文件读取是异步的，因此 FileReader 使用事件处理程序（例如 onload）来捕获读取完成后的结果。
+:::
 
 
 
