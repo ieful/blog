@@ -17,7 +17,7 @@ import MyAscii from './ascii';
 * 前端项目请求实例封装中的文件/图片上传
 * FileReader接口（以及一系列的WebAPI）
 
-#### 文件类型
+### 文件类型
 
 Q: 首先什么是文件？
 
@@ -42,7 +42,7 @@ A: 在计算机中文件就是存储在某种存储设备中的一段 **数据**
 第二读取：从磁盘读取一个文本文件的二进制数据，需要进行ASCII编码转换成文本字符展示，而打开一张图片同样有字节数据到图像信息的转换过程。
 :::
 
-#### Base64编码
+### Base64编码
 
 Base64编码是从二进制值到某些特定字符的编码，这些特定字符一共64个，所以称为Base64.
 
@@ -54,11 +54,46 @@ A: 真正的原因是为了**兼容**。 在网络的整个传输过程中会途
 表示的意义是不一样的，做的处理也不一样甚至在一些老的软件网络协议上也有类似的问题，但是万幸的是，Base64使用的这64个字符经过ASCII/UTF-8编码之后在绝大多数机器上，软件的行为是一致的。
 :::
 
-#### 几种常见的字符编码
 
 #### ASCII编码
 
 ASCII编码总共**128**个，其中不可打印字符**33个** （0 ~ 31 + 第 127），可打印字符**95个** （32 ~ 126）。
 
 <MyAscii></MyAscii>
+
+### 前端项目中封装请求实例的content-type
+
+#### 先说结论
+
+1、Post请求简单表单数据：**Content-Type: application/x-www-form-urlencoded**
+
+:::info
+通常被用于HTML表单提交，数据会被编码成键值对的形式
+:::
+
+2、Post请求，JSON数据：**Content-Type: application/json**
+
+:::info
+当通过 POST 请求发送 JSON 格式的数据时，应该使用这个 Content-Type。这在现代 Web 开发中很常见，特别是与 RESTful API 一起使用
+:::
+
+3、POST请求，文件上传：**Content-Type: application/form-data**
+
+:::info
+用于通过 POST 请求上传文件。常用于表单中包含文件上传的场景
+:::
+
+4、POST请求，纯文本数据：**Content-Type: text/plain**
+
+:::info
+用于发送纯文本数据。
+:::
+
+5、Get请求，一般不包含请求体，但是如果包含了一般使用 **Content-Type: application/x-www-form-urlencoded** 或者 **Content-Type: text/plain**
+
+6、XML 数据：**Content-Type: application/xml**, 当需要发送或接收 XML 数据时使用.
+
+:::tip
+Content-Type 是 HTTP 请求头部的一个字段，用于指示请求或响应中包含的实体的媒体类型。正确设置 Content-Type 对于确保服务器正确解析请求或响应非常重要
+:::
 
