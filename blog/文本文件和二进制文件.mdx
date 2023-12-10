@@ -94,6 +94,45 @@ ASCII编码总共**128**个，其中不可打印字符**33个** （0 ~ 31 + 第 
 6、XML 数据：**Content-Type: application/xml**, 当需要发送或接收 XML 数据时使用.
 
 :::tip
-Content-Type 是 HTTP 请求头部的一个字段，用于指示请求或响应中包含的实体的媒体类型。正确设置 Content-Type 对于确保服务器正确解析请求或响应非常重要
+Content-Type 既可以出现在请求头中，也可以出现在响应头中。在 HTTP 协议中，Content-Type 是用来指示实体正文的媒体类型的标头字段。
+
+因此，Content-Type 是一个常见的请求头和响应头字段，用于确保发送和接收的数据以正确的格式进行解析。在请求头中，它告诉服务器请求正文的格式，而在响应头中，它告诉客户端返回数据的格式。
 :::
+
+#### 关于 responseType
+
+**responseType** 是*Fetch API* 中请求配置对象的一个属性，因此他是**请求头**的一部分，用于指定服务器响应
+的数据类型。**axios** 是一个基于*Promise*的http客户端库，它在使用上很类似于Fetch API，并且也提供了类似的
+配置项其中包括*responseType*.
+
+可以通过配置*responseType*来告诉浏览器希望以什么样的数据类型来处理服务器响应。以下是一些常见的*responseType*值
+
+1、**responseType: 'text'** 将响应解析为文本字符串
+
+2、**responseType: 'json'** 将响应解析为JSON对象
+
+3、**responseType: 'blob'** 将响应解析为二进制数据（Blob对象）
+
+4、**responseType: 'arraybuffer'** 将响应解析为二进制对象（ArrayBuffer对象）
+
+5、**responseType: 'document'** 将响应解析为XML文档（可以是XML、HTML等）
+
+6、**responseType: 'stream'** 用于将响应数据以**Node.js** 可读流的形式返回。这种形式对于处理大型响应数据或实时数据流非常有用！
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
