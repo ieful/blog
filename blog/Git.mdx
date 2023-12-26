@@ -1,0 +1,169 @@
+---
+title: 搞清楚Git
+---
+
+### Git 里面的 origin 到底代表啥意思? 文章由此展开...
+
+相信有不少小伙伴在很长的一段时间里会经常在使用 git 的过程中经常见到 origin 这个词，但是并不清楚其具体含义
+
+其实它只是一个**别名** 代表的是 **远程git服务器** 的意思。
+
+假设公司有一个内部gitlab或gitea搭建的服务器，地址为：http://192.168.1.100/
+
+外网服务器上也有一个git服务器，地址为：https://git.company.com
+
+假设你们在做一个项目叫“sixsixsix”，你是项目负责人，你叫zhangsan，现在你要给你的项目一个git仓库。
+
+首先，你在本地搭好框架，项目文件夹是sixsixsix，然后做git的初始化和提交
+
+```bash
+    cd sixsixsix
+    git init
+    git add .
+    git commit -m "项目起步，首次提交"
+```
+
+好了，现在你要推送到内部服务器，要推送到服务器，你得先添加地址，不然git怎么知道要往哪儿推送呢？😂
+
+所以你要先在内网git服务器上添加一个仓库，并把仓库地址添加到你本地git仓库中，这样你push的时候，git才知道往哪个地址push
+
+```bash
+    git remote add neiwang http://192.168.1.100/zhangsan/sixsixsix.git
+```
+
+远程服务器，虽然还没那么快推送，但是还是先添加一下，先把流程跑通，免得要推送的时候出问题
+
+```bash
+    git remote add gongwang https://git.company.com/zhangsan/sixsixsix.git
+```
+好了，你现在添加了两个远程服务器地址了，是时候推送了
+
+先往内部服务器推送master分支(-u neiwang用于指定向内网服务器推送）
+
+```bash
+  git push -u neiwang master
+```
+后期做好之后，向公网服务器推送稳定分支(-u gongwang用于指向向公网服务器推送)
+
+```bash
+  git push -u gongwang stable
+```
+
+是不是发现，貌似跟如下所示的(你在csdn查的)命令类似？
+
+```bash
+  git push -u origin master
+```
+
+其实到这里你应该已经明白，neiwang、gongwang、origin这三个就是一类东西，就是用来代表“远程仓库”的，就是名称不一样而已。(git 默认生成的就叫做"origin")
+
+事实上，推送到内网和公网的命令你还可以写成这样:
+
+```bash
+  git push http://192.168.1.100/zhangsan/sixsixsix.git master
+  git push https://git.company.com/zhangsan/sixsixsix.git stable
+```
+
+:::tip
+其实无论neiwang、gongwang、origin，它们只是远程服务器的一个别名，否则你就要写整个地址，显然写整个地址太长太麻烦
+:::
+
+### 内部存储
+
+我们平时常用的git pull就是一pull，就把同事的代码更新下来了(更新到工作目录了)，但实际上，拿内网git服务器来说，如果你从内网git服务器上git pull数据，
+
+它的操作相当于先用git fetch把数据拉到你本地项目中的.git/refs/remotes/neiwang/下边的master分支中的，如果从外网仓库拉数据，它是会先保存到.git/refs/remotes/waiwang/ 下边的stable分支中，
+
+当然我们见过的最多的，应该还是.git/refs/remotes/origin/ 。同理，你git push的时候，数据也是先往.git/refs/remotes/neiwang/、.git/refs/remotes/waiwang/、.git/refs/remotes/origin/中的对应分支写入的
+
+(当然写入的只是一个“引用”，具体数据都在“objects”文件夹中)
+
+:::info
+其实所谓的：neiwang、waiwang、origin，都只不过是.git/refs/remotes/下的一个文件夹名称而已，
+这是git的工作原理决定的，.git/refs/remotes/下的文件夹，是跟远程仓库数据关联的，可以认为它们是远程仓库在你本地的缓存，
+如果没有：neiwang、waiwang、origin这些名称，难道要把文件夹名称命名为整个仓库url那么长吗？显然这是不可能的事！
+
+这一点还体现在你的本地仓库配置文件.git/config中:
+
+```bash
+    [remote "neiwang"]
+        url = https://github.com/zhangsan/sixsixsix.git
+        fetch = +refs/heads/*:refs/remotes/neiwang/*
+    [remote "waiwang"]
+        url = https://github.com/xiebruce/sixsixsix.git
+        fetch = +refs/heads/*:refs/remotes/waiwang/*
+    [branch "master"]
+        remote = neiwang
+        merge = refs/heads/master
+```
+:::
+
+
+### git push / git pull 的完整命令形式
+
+
+```bash
+    Use git push to push commits made on your local branch to a remote repository.
+
+    The git push command takes two arguments:
+
+    A remote name, for example, origin
+    A branch name, for example, master
+    For example:
+
+    git push  <REMOTENAME> <BRANCHNAME>
+
+    As an example, you usually run $ git push origin master
+
+    to push your local changes to your online repository.
+```
+
+
+```bash
+    git push [remote] [local_branch]:[remote_branch] # 将本地某分支推送到远程某分支
+
+    git pull [remote] [remote_branch]:[local_brance] # 将远程某分支拉取到本地某分支
+```
+
+:::tip
+对于 **git push 如果本地分支名与远程分支名相同，则可以省略冒号**,例如把本地的master分支推动到远程master分支
+
+可以使用  *git push origin master* 代替 *git push origin master:master*
+
+对于**git pull, 如果远程分支是与当前分支合并，则冒号后面的部分可以省略**, 例如把远程master分支的代码合并到本地的brantest分支
+
+可以使用 *git pull origin master* 代替 *git pull origin master:brantest*
+:::
+
+
+```bash
+    git push origin master:master # 将本地的master分支提交到远程
+
+    git push origin master # 将本地当前分支提交到远程
+```
+
+
+:::tip
+    git pull origin master:brantest
+
+    将远程主机origin的master分支拉取过来，与本地的brantest分支合并。
+
+    后面的冒号可以省略：
+
+    git pull origin master
+
+    表示将远程origin主机的master分支拉取过来和本地的**当前分支**进行合并。 (如果远程分支是与当前分支合并，则冒号后面的部分可以省略)
+
+    git push origin HEAD:master  表示将本地当前HEAD指向分支的commit提交到远程origin的master
+:::
+
+
+参考：https://www.zhihu.com/question/27712995
+    https://blog.csdn.net/weixin_41287260/article/details/89743120
+    https://blog.csdn.net/weixin_44162077/article/details/124598638
+    https://www.runoob.com/git/git-pull.html
+    https://www.runoob.com/git/git-push.html
+
+
+
+
