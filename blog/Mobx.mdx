@@ -1,0 +1,39 @@
+---
+title: Mobx
+---
+
+### Flux 开端
+
+前端的很多状态管理工具🔧都借鉴了Flux的理念，比如大家经常听到的**单向数据流**的原则最初就是由Flux带入前端领域的， Flux 是由 facebook 团队推出的一种架构理念，并给出一份代码实现。
+
+
+#### 为什么会有 Flux 的诞生？
+
+Facebook 一开始是采用传统的 MVC 范式进行系统的开发
+
+![mvc](/img/mvc.png)
+
+但随着业务逻辑的复杂，渐渐地发现代码里越来越难去加入新功能，很多状态耦合在了一起，对于状态的处理也耦合在了一起:
+
+![mvcs](/img/mvcs.png)
+
+造成了 FB 团队对 MVC 吐槽最深的两个点：
+
+* Controller 的中心化不利于扩展，核心是因为 Controller 里需要处理大量复杂的对于 Model 更改的逻辑;
+* 对于 Model 的更改可能来源于各个方向。 可能是开发者本身想对 Model 进行更改、可能是 View 上的某个回调想对 Model 进行更改，可能是一个 Model 的更改引发了另一个 Model 的更改。
+
+
+由上图可以看到出基于 MVC 的数据流向就有三种：
+
+* Controller -> Model -> View
+* Controller -> Model -> View -> Model -> View ... (loop)
+* Controller -> Model1 -> Model2 -> View1 -> view2 ...
+
+并且三种数据流向在实际业务中还很有可能是交织在一起...
+
+为了改善以上 MVC 在复杂应用中的缺陷，降低系统整体复杂度，FB 团队推出了 Flux 架构，结合 React 重构了他们的代码，这就是 Flux 架构诞生的原因。
+
+
+
+
+
