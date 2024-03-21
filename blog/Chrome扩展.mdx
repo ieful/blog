@@ -1,0 +1,45 @@
+import {initPlugins} from "@docusaurus/core/lib/server/plugins/init";
+---
+title: 记录最近做的两个浏览器（Chrome内核）扩展
+---
+
+
+import HarDemo from './HAR';
+import Chat from './Chat';
+import Write from "./Write";
+import Gpt from "./GPT";
+
+### 扩展一： HAR Debugger 一个可以帮助开发者快速定位客户网络或者产品问题的工具插件
+
+产品内部自测通过，交付用户后在用户的电脑💻上奔溃了，客户投诉产品垃圾怎么办？
+
+#### 什么是HAR包？
+
+定义：HTTP存档格式（HTTP Archive format，简称HAR）是一种JSON格式的存档文件格式，多用于记录网页浏览器与网站的交互过程。文件扩展名通常为.har
+
+“HAR格式的规范定义了一个HTTP事务的存档格式，可用于网页浏览器导出加载网页时的详细性能数据  ”									——Wikipedia
+
+如下所示：通过改扩展可以帮住你方便地记录客户电脑上一段时间发生的网络时间，通过生成的HAR包文件，方便在自己本地电脑复现！🥸（好吧，我承认这场景有点无聊🥱）
+<HarDemo></HarDemo>
+
+
+### 扩展二：AI智能助手 + 网页划词
+
+这个东西最近可是太火🔥了，各种AI助手...满天飞，自己也做了一个，效果如下：
+
+
+##### 聊天写作✏️能力
+
+<Chat></Chat>
+
+
+##### 网页划词翻译能力
+
+<Write></Write>
+
+##### 改版UI加入历史对话
+
+<Gpt></Gpt>
+
+
+
