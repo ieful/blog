@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'xiaoyu.work',
-  tagline: 'record my work & life😉',
+  tagline: '⌨️ still hunting for job... 🖱',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
