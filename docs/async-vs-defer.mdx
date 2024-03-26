@@ -1,0 +1,36 @@
+---
+slug: async-vs-defer
+title: async和defer的脚本加载
+---
+
+
+#### Legend
+
+<img src='https://www.growingwiththeweb.com/images/2014/02/26/legend.svg' width={300}/>
+
+
+#### 普通 ``<script>``标签
+
+<img src='https://www.growingwiththeweb.com/images/2014/02/26/script.svg'/>
+
+
+
+#### 添加了 **async** 属性 ``<script async>``
+
+<img src='https://www.growingwiththeweb.com/images/2014/02/26/script-async.svg'/>
+
+
+
+
+#### 添加了 **defer** 属性 ``<script defer>``
+
+<img src='https://www.growingwiththeweb.com/images/2014/02/26/script-defer.svg'/>
+
+
+
+:::tip
+总结：普通的script下载会导致html停止解析，下载完后立即执行，整个过程是阻塞页面的解析的；
+添加了async或者defer属性的script下载阶段都不会阻塞html的解析，区别是async是下载完后立即执行且在存在多个
+带有async的script外部脚本的情况下各个脚本的执行是乱序的，谁先下载完谁先执行，而defer下载的脚本会等html全部解析完毕后
+再依次执行。
+:::
