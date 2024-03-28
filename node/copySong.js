@@ -15,7 +15,7 @@ async function copyMp3Files(sourceDir, targetDir) {
             const sourceFile = path.join(sourceDir, file);
 
             // 检查文件是否是以 .mp3 结尾的
-            if (file.endsWith('.mp3') && file.includes('蔡依林')) {
+            if (file.endsWith('.mp3') && file.includes('伍佰')) {
                 // 提取新文件名
                 const fileNameParts = file.split(' '); // 按空格拆分文件名
                 const newFileName = fileNameParts[fileNameParts.length - 1]; // 取最后一段作为新文件名
@@ -36,7 +36,7 @@ async function copyMp3Files(sourceDir, targetDir) {
 
 // 指定源文件夹和目标文件夹路径
 const sourceFolder = '/Users/wangxiaoyu/Music/其他';
-const targetFolder = '/Users/wangxiaoyu/Allen/blog/static/audio/Jolin';
+const targetFolder = '/Users/wangxiaoyu/Allen/blog/static/audio/500';
 
 // 调用函数开始拷贝
 copyMp3Files(sourceFolder, targetFolder);
