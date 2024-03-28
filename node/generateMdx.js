@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const sourceFolder = '/Users/wangxiaoyu/Allen/blog/static/audio/Jay';
-const targetFolder = '/Users/wangxiaoyu/Allen/blog/docs/Me/请你听歌/Jay';
+const sourceFolder = '/Users/wangxiaoyu/Allen/blog/static/audio/Jolin';
+const targetFolder = '/Users/wangxiaoyu/Allen/blog/docs/Me/请你听歌/Jolin';
 
 function createMdxFile(fileName) {
     const mdxContent = `---
@@ -11,7 +11,7 @@ tags: [Music]
 ---
 
 <audio controls>
-    <source src="/audio/Jay/${fileName}.mp3" type="audio/mpeg" />
+    <source src="/audio/Jolin/${fileName}.mp3" type="audio/mpeg" />
     Your browser does not support the audio element.
 </audio>
 `;
