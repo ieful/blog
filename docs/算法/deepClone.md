@@ -4,20 +4,18 @@ title: deepClone
 ---
 
 
+
 ```javascript
-    function myDeepClone(obj) {
-    let result
-    if (typeof obj !== 'object' || obj === null) {
-        return obj
+function myDeepClone(sourceObj) {
+    let result;
+    if (typeof sourceObj !== 'object' || sourceObj === null) {
+        // 如果是基本类型: string、boolean、number或者null 就直接返回本身
+        return sourceObj;
     }
-    if (obj instanceof Array) {
-        result = []
-    } else {
-        result = {}
+    result = Array.isArray(sourceObj) ? [] : {};
+    for (let key in sourceObj) {
+        result[key] = myDeepClone(sourceObj[key]) // 递归复制
     }
-    for (let key in obj) {
-        result[key] = myDeepClone(obj[key])
-    }
-    return result;
+    return result
 }
 ```

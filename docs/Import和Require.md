@@ -41,10 +41,10 @@ const greeting_VIP = ...
 2、module.exports 不再是指向一个方法，而是一个对象，对象中包含要输出的方法
 
 ```js
-    module.exports  = {
-        greeting,
-        greeting_VIP
-    }
+module.exports  = {
+    greeting,
+    greeting_VIP
+}
 ```
 
 **输入**

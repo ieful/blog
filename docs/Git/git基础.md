@@ -8,8 +8,8 @@ title: Git基础
 在一个目录下运行 `git init` 命令就可以把当前目录变成git可以管理的仓库：
 
 ```bash
-    git init
-    // Initialized empty Git repository in /Users/Allen/...
+git init
+# Initialized empty Git repository in /Users/Allen/...
 ```
 
 

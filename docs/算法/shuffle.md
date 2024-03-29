@@ -6,7 +6,7 @@ title: 洗牌算法(js乱序)
 #### 经典shuffle洗牌算法(真乱序)
 
 
-```bash
+```javascript
 function shuffle(array) {
   let currentIndex = array.length;
   let temporaryValue;

@@ -22,38 +22,36 @@ async function main() {
 
 
 // 2、事件循环面试题
-    async function async1() {
-        console.log('async1 start');
-        await async2();
-        console.log('async1 end');
-    }
+async function async1() {
+    console.log('async1 start');
+    await async2();
+    console.log('async1 end');
+}
     
-    async function async2() {
-        new Promise((resolve) => {
-            console.log('new promise');
-            resolve();
-        }).then(() => {
-            console.log('async2 end');
-        })
-    }
-    
-    setTimeout(() => {
-        console.log('settimeout');
-    },0)
-    
-    console.log('script start');
-    
-    async1();
-    
+async function async2() {
     new Promise((resolve) => {
-        console.log('promise2');
+        console.log('new promise');
         resolve();
     }).then(() => {
-        console.log('pormise4')
+        console.log('async2 end');
     })
+}
     
-    console.log('script end');
+setTimeout(() => {
+    console.log('settimeout');
+},0)
+
+console.log('script start');
+
+async1();
+    
+new Promise((resolve) => {
+    console.log('promise2');
+    resolve();
+}).then(() => {
+    console.log('pormise4')
+})
+    
+console.log('script end');
 // 3、 useMemo 和 useCallback
-
-
 ```

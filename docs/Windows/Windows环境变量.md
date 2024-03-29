@@ -6,7 +6,7 @@ title: Windows环境变量
 windows hosts文件位置
 
 ```bash
-    C:\Windows\System32\drivers\etc
+C:\Windows\System32\drivers\etc
 ```
 
 #### 环境变量是什么
@@ -16,7 +16,7 @@ windows hosts文件位置
 #### 查看环境变量
 
 ```bash
-    set
+set
 ```
 可以通过 `set` 命令查看当前可用的环境变量
 

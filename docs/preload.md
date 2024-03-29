@@ -5,8 +5,8 @@ title: prefetch和preload
 
 
 ```html
-    <link rel="preload" href="style.css" as="style" />
-    <link rel="preload" href="main.js" as="script" />
+<link rel="preload" href="style.css" as="style" />
+<link rel="preload" href="main.js" as="script" />
 ```
 
 

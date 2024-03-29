@@ -25,10 +25,10 @@ boundShowName(); // 打印 'xiaoyu'
 
 ```javascript
 // 手写一个bind实现
-    Function.prototype.myBind = function (context) {
-        let self = this;
-        return function () {
-            self.call(context)
-        }
+Function.prototype.myBind = function (context) {
+    let self = this;
+    return function () {
+        self.call(context)
     }
+}
 ```

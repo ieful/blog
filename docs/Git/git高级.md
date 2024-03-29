@@ -76,7 +76,7 @@ $ git cherry-pick A^..B
 #### 导航 —— 跳到之前的分支
 
 ```bash
-    git checkout -
+git checkout -
 ```
 
 #### switch
@@ -84,35 +84,35 @@ $ git cherry-pick A^..B
 创建并切换到新的分支,除了可以使用 git checkout -b 还可以用switch
 
 ```bash
-    git switch -c newbranch
+git switch -c newbranch
 ```
 
 #### 查看所有提交历史
 
 ```bash
-    git reflog
+git reflog
 ```
 
 #### 回滚到相应提交
 
 ```bash
-    git reset --hard <提交的哈希值>
+git reset --hard <提交的哈希值>
 ```
 
 #### 编辑上次提交
 
 ```bash
-    git commit --amend -m "更好的提交日志"
+git commit --amend -m "更好的提交日志"
 ```
 
 #### 暂存
 
 ```bash
-    git stash #暂存工作区和暂存区的修改
-    git stash save 'message ...' #可以添加一些注释,推荐添加注释,不然有多个的时候你会分不清
-    git stash list #显示暂存的列表
-    git stash pop #恢复最新的的进度到工作区
-    git stash pop stash@{1} #恢复指定的进度到工作区。stash_id是通过git stash list命令得到的
+git stash #暂存工作区和暂存区的修改
+git stash save 'message ...' #可以添加一些注释,推荐添加注释,不然有多个的时候你会分不清
+git stash list #显示暂存的列表
+git stash pop #恢复最新的的进度到工作区
+git stash pop stash@{1} #恢复指定的进度到工作区。stash_id是通过git stash list命令得到的
 ```
 
 ### revert

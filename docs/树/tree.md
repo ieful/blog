@@ -12,19 +12,18 @@ title: 二叉搜索树
 *二叉树*： 节点最多有两个子节点，一个左节点，一个右节点
 *二叉搜索树（BST）*：是二叉树的一种，只允许左侧存储比父节点小的值，右侧存储比父节点大的值。
 
-```javascript
-// 创建一个二叉搜索树
 
+#### 创建一个二叉搜索树
+```javascript
 // 节点类
 function Node(key) {
     this.key = key;
     this.left = null;
     this.right = null;
 }
+// 二叉搜索树
 function BinarySearchTree() {
-    
     let rootNode = new Node(null);
-    
     let root = rootNode;
 }
 

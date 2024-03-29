@@ -10,7 +10,6 @@ title: Git进阶
 ```baah
 $ git remote add origin [your remote repository address] # 关联远程
 
-
 $ git push -u origin master # 把本地库的所有内容推送到远程库上
 ```
 
@@ -23,7 +22,7 @@ $ git push -u origin master # 把本地库的所有内容推送到远程库上
 先创建远程库，然后从远程库克隆即可
 
 ```bash
-    git clone your remote repository address
+git clone your remote repository address
 ```
 
 
