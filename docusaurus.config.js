@@ -8,7 +8,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const config = {
   title: 'xiaoyu.work',
   tagline: '⌨️ still hunting for job... 🖱',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/githubavator.png',
 
   // Set the production url of your site here
   url: 'https://blog.xiaoyu.work/',
