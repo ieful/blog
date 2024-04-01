@@ -14,7 +14,7 @@ TypeScript 提供了 JavaScript 的所有功能，并在这些功能之上添加
 
 TypeScript 可以识别 JavaScript 语言，在许多情况下可以推断类型。例如，在创建变量并将其赋值给特定值时， TypeScript 将使用该值作为其类型。（例如在给变量赋值为原始类型值时）
 
-```bash
+```js
 let helloWorld = "Hello World"; 
 // 这样写时ts可以直接推断出 `helloWorld` 变量是 string类型，而不用额外的备注说明
 ```
@@ -25,7 +25,7 @@ let helloWorld = "Hello World";
 
 例如，要创建具有推断类型的**对象**，该类型包括 name: string 和 id: number，可以像下面👇这么写:
 
-```bash
+```js
 const user = {
   name: "Hayes",
   id: 0,
@@ -33,7 +33,7 @@ const user = {
 ```
 此时就可以使用 interface 关键字声明显式地描述此对象的内部数据的类型：
 
-```bash
+```typescript
 interface User {
   name: string;
   id: number;
@@ -42,7 +42,7 @@ interface User {
 
 然后就可以声明一个符合此接口（interface）的 JavaScript 对象，在变量声明后使用像 : **TypeName** 这样的语法：
 
-```bash
+```typescript
 interface User {
   name: string;
   id: number;
@@ -57,7 +57,7 @@ const user: User = {
 
 经过这样的操作，后面如果你提供的对象，跟定义的接口结构不一致，ts就能及时地给出你警告了～(从而避免你出错😯)
 
-```bash
+```typescript
 interface User {
   name: string;
   id: number;
@@ -76,7 +76,7 @@ Type '{ username: string; id: number; }' is not assignable to type 'User'.
 JavaScript 中已经有一些基本类型可用：boolean、 bigint、 null、number、 string、 symbol 和 undefined，它们都可以在接口中使用。TypeScript 将此列表扩展为更多的内容，例如 any （允许任何类型）、unknown （确保使用此类型的人声明类型是什么）、 never （这种类型不可能发生）和 void （返回 undefined 或没有返回值的函数）。
 另外，由于 JavaScript 支持类和面向对象编程，TypeScript 也支持。你可以将接口声明与类一起使用：
 
-```bash
+```typescript
 interface User {
   name: string;
   id: number;
