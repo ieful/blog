@@ -1,19 +1,34 @@
 import React, {useEffect, useRef, useState} from 'react';
+import './index.css';
 
-
-const WaveBg = (porps) => {
+const WaveBg = (props) => {
     const audioRef = useRef(null);
+    const lyricRef = useRef(null);
     const [audioStatus, setAudioStatus] = useState('pause');
+    const [currentLyric, setCurrentLyric] = useState('');
 
-    useEffect(() => {
-        audioRef.current.addEventListener("play", function() {
-            setAudioStatus('play');
-        });
-        audioRef.current.addEventListener("pause", function() {
-            setAudioStatus('pause');
-        });
-        return () => Ve();
-    }, []);
+    let lyricsKeys = [];
+    let currentIndex = 0;
+    if (props.lyric) {
+        lyricsKeys = Object.keys(props.lyric);
+    }
+
+
+    function handleTimeUpdate() {
+        const currentTime = audioRef.current?.currentTime;
+        const nextTime = audioRef.current?.duration;
+
+        for (let i = currentIndex; i < lyricsKeys.length; i++) {
+            const startTime = parseTime(lyricsKeys[i]);
+            const endTime = i + 1 < lyricsKeys.length ? parseTime(lyricsKeys[i + 1]) : nextTime;
+
+            if (currentTime >= startTime && currentTime < endTime) {
+                currentIndex = i;
+                setCurrentLyric(props.lyric[lyricsKeys[i]]);
+                break;
+            }
+        }
+    }
 
     useEffect(() => {
         if (audioStatus === 'play') {
@@ -21,6 +36,7 @@ const WaveBg = (porps) => {
         } else {
             Ve();
         }
+        return () => Ve();
     }, [audioStatus])
 
     function xv(t) {
@@ -71,11 +87,29 @@ const WaveBg = (porps) => {
 
 
     return (
-        <audio controls ref={audioRef}>
-            <source src={porps.songPath} type="audio/mpeg" />
-            Your browser does not support the audio element.
-        </audio>
+        <div className="audioWrapper">
+            <audio
+                ref={audioRef}
+                controls
+                onTimeUpdate={handleTimeUpdate}
+                onPlay={() => setAudioStatus('play')}
+                onPause={() => setAudioStatus('pause')}>
+                <source src={props.songPath} type="audio/mpeg" />
+                Your browser does not support the audio element.
+            </audio>
+            {
+                props.lyric && <div ref={lyricRef} className="currentLyric">{currentLyric}</div>
+            }
+        </div>
     )
+
+    function parseTime(timeString) {
+        const timeParts = timeString.match(/\[(\d{2}):(\d{2})\.(\d{3})\]/);
+        const minutes = parseInt(timeParts[1]);
+        const seconds = parseInt(timeParts[2]);
+        const milliseconds = parseInt(timeParts[3]);
+        return minutes * 60 + seconds + milliseconds / 1000;
+    }
 }
 
 export default WaveBg;

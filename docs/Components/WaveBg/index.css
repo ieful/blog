@@ -1,0 +1,13 @@
+.audioWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.audioWrapper .currentLyric {
+    /*position: absolute;*/
+    /*left: 55%;*/
+    font-size: 30px;
+    color: #fbc2eb;
+}
