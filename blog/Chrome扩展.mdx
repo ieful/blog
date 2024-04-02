@@ -45,7 +45,7 @@ import Gpt from "./GPT";
 ```
 有些数据的组织过程需要跨事件来攒，虽然说每个请求都有一个requestId来串起来，但是其中的**拼接规则** 我还是拿不准😭
 
-于是就放弃了纯手工攒数据的方向，开始求助社区，果然在*npm.org*里被我发现了这个👉：[Chrome-har](https://www.npmjs.com/package/chrome-har)
+于是就放弃了纯手工攒数据的方向，开始求助社区，果然在万能的*npm*里被我发现了这个👉：[Chrome-har](https://www.npmjs.com/package/chrome-har)
 
 看该package的简介：
 
@@ -56,6 +56,201 @@ import Gpt from "./GPT";
     initial implementation inspired by Chromedriver_har.”
 
 简介中的第一句话正是我要的，后面提到了另一个工具 **Browsertime** 我去看了下，很强大不过我用不到～，感兴趣的小伙伴可以去了解一下 [Browsertime](https://github.com/sitespeedio/browsertime)
+
+*npm install chrome-har* 直接开搞 ⌨️
+
+```js
+/*background.js*/
+
+// 首先我在后台脚本的全局环境下初始化了几个变量，分别用来表示当前是否正在记录网络事件、
+// 当前通信的tab页签、网页名称(这个后面给生成的har包命名用)，
+// 以及一个用来保存收集到的事件对象的数组，这个用来“喂” 给chrome-har 生成我需要的文件
+let recording = false;
+let tabId = void 0;
+let tabTitle = '';
+let networkEvents = []; // 收集所有的事件对象
+
+
+// 定义chrome扩展的debugger事件监听函数
+const debuggerEventListener = (debuggeeId, method, params) => {
+    networkEvents.push({method, params}); // 把监听到的事件一股脑儿全放 networkEvents 里面
+}
+
+// 监听开始的函数，需要调用chrome.debugger.attach方法将要监听的网页tabId绑定
+// 并开启对 'Network.enable' 和 'Page.enable' 系列事件的监听
+const startRecording = () => {
+    // https://developer.chrome.com/docs/extensions/reference/api/debugger?hl=zh-cn#method-attach
+    chrome.debugger.attach({ tabId }, '1.2', function () {
+        chrome.debugger.sendCommand({ tabId }, 'Network.enable', {});
+        chrome.debugger.sendCommand({tabId}, 'Page.enable', {}); // page事件包含时间信息，需要添加监听
+    });
+    recording = true;
+}
+
+// 停止监听函数，调用chrome.debugger.detach 方法解除对监听的网页的绑定
+const stopRecording = () => {
+    chrome.debugger.detach({tabId}, function () {
+        recording = false;
+    })
+}
+
+// 初始化：background脚本刚加载也就是扩展刚进入工作时执行的一个给扩展icon添加一个OFF字段，
+// 表示未工作
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.action.setBadgeText({
+        text: 'OFF' // 默认off
+    });
+});
+
+// 当用户点击扩展icon时候的监听函数
+chrome.action.onClicked.addListener((tab) => {
+    tabId = tab.id; // 设置tabId
+    tabTitle = tab.title; // 设置tabTitle
+    chrome.action.getBadgeText({ tabId: tab.id }, function (preState) {
+        const nextState = preState === 'ON' ? 'OFF' : 'ON'; // 切换当前的工作状态的显示
+        chrome.action.setBadgeText({
+            tabId: tab.id,
+            text: nextState
+        });
+        if (nextState === 'ON') {
+            startRecording(); // 开启监听 -> attach
+            chrome.debugger.onEvent.addListener(debuggerEventListener); // 监听回调
+        } else if (nextState === 'OFF') {
+            stopRecording(); // 停止监听 -> detach
+            chrome.debugger.onEvent.removeListener(debuggerEventListener); // 移除监听回调
+            // 这里我们把收集到的事件做了一个过滤，去除里面的Page.frameResized事件，这个是记录开始时顶部会有一个提示扩展正在调试该页面的
+            // 提示信息导致页面尺寸发生变动，这个事件对于我们最终收集数据没用徒占空间，因此我们直接把它过滤出去
+            networkEvents = networkEvents.filter(item => item.method !== 'Page.frameResized');
+            // 在把收集到的事件信息发送给前台之前，做一个检查✊
+            if (networkEvents.length) {
+                // 利用chrome.tabs.sendMessage消息通信将后台收集到的数据发送给前台
+                chrome.tabs.sendMessage(tabId, {
+                    type: 'Har',
+                    harData: networkEvents,
+                    name: tabTitle
+                }, null, (response) => {
+                    if (response && response.action === 'clear') {
+                        networkEvents = [];
+                    }
+                })
+            } else {
+                alert('没有监听到任何有效数据，请重新操作。');
+            }
+        }
+    })
+});
+
+```
+```js
+/*content.js 前台脚本*/
+
+// 引入我们安装的chrome-har (注意：这是一个node包，所以我们使用commonjs的方式require引入)
+const { harFromMessages } = require('chrome-har');
+
+// 监听函数逻辑
+const backgroundListener = (message, sender, sendResponse) => {
+    // sender.id 是扩展的id "njjdcblpajfbeljfhfgiielnhgkdmhkn"
+    if (message.type === 'Har') {
+        // 调用chrome-har包提供的 harFromMessages 方法生成 har文件
+        const har = harFromMessages(message.harData, {includeTextFromResponseBody: true, includeResourcesFromDiskCache: true});
+        if (!har.log.pages.length || !har.log.entries.length) {
+            alert('没有监听到任何有效数据，请重新操作。');
+        }
+
+        // 下面👇的操作就是生成完har包后自动下载⏬
+        const blob = new Blob([JSON.stringify(har)], {
+            type: "application/json",
+        });
+        const downloadLink = document.createElement('a');
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = `${message.name}.har`;
+        downloadLink.textContent = 'Download HAR';
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        // 完成之后记得通知后台脚本做【清空】处理，否则下次记录网络事件会带上上一次的数据
+        sendResponse({
+            action: 'clear'
+        })
+    }
+}
+
+// 监听从后台传递过来的消息
+chrome.runtime.onMessage.addListener(backgroundListener);
+
+```
+由于 **chrome-har** 是一个commonjs格式的node包，因此我们不能愉快的用vite进行构建打包只能重拾webpack，简单写个配置文件 npm run build 执行 webpack 走起!
+
+```js
+/*webpack.config.js*/
+
+const path = require('path');
+module.exports = {
+    entry: '/src/content.js',
+    output: {
+        filename: 'content.js',
+        path: path.resolve(__dirname, 'dist'),
+    },
+};
+```
+本以为这样就结束了，但是安装上扩展到浏览器进行测试发现，导出的har包中请求头、如参、url、时间信息...这些都有，唯独没有响应实体信息😺。。。
+
+这个不尴尬了嘛😅，没有响应数据我看个毛啊，白折腾啊，于是我跑到了作者的github主页，去issues中试图寻找有没有类似问题，果然被我找到
+
+![alt text](/img/harissues1.png)
+
+这个issue下面有很多讨论，后面作者在一系列的回复中表示，不会单独在chrome-har中实现该功能，chrome-har 将只会作为使用已有数据组装har文件的简单工具
+
+![alt text](/img/harissues2.png)
+
+略带些许沮丧的我无奈打开了chrome-har的源码进行查看，在其中看到这样一行注释👀：
+
+![alt text](/img/common.png)
+
+意思很明确response.body 需要我自己提供，并且给我甩出来了一个链接 [🔗https://chromedevtools.github.io/devtools-protocol/tot/Network#type-Response](https://chromedevtools.github.io/devtools-protocol/tot/Network#type-Response)
+
+链接打开直接定位到了对于 Network.Response 的字段解析，从中得要想拿到response.body我需要自己通过 requestId 以异步请求的方式获取对应的 Network.Response 并从中解析出 response.body
+
+所以我的后台脚本中需做修改
+
+```js
+/*background.js*/
+
+// 主要就是调整这个事件监听函数的处理逻辑，之前是把所有监听到的事件不做任何处理一股脑儿
+// 直接放networkEvents里面了，现在需要做的就是对关联响应结果的事件单独做异步的请求
+// 在返回的Network.Response 中解析出 response.body
+const debuggerEventListener = (debuggeeId, method, params) => {
+    // networkEvents.push({method, params});
+    if (recording && debuggeeId.tabId === tabId) {
+      if (method !== 'Network.responseReceived' && method !== 'Network.dataReceived') {
+        networkEvents.push({method, params});
+      } else {
+        const requestId = params.requestId;
+        if (params.response) {
+          chrome.debugger.sendCommand({ tabId: tabId }, "Network.getResponseBody", { requestId: requestId }, function (responseBody) {
+            if (responseBody) {
+              if (responseBody.body) {
+                params.response.body = responseBody.body;
+                networkEvents.push({method, params});
+              } else {
+                networkEvents.push({method, params});
+              }
+            } else {
+              console.log('获取responseBody失败');
+              networkEvents.push({method, params});
+            }
+          });
+        } else {
+          networkEvents.push({method, params});
+        }
+      }
+    } else {
+        return;
+    }
+}
+```
+经过一波三折的一番折腾后扩展终于可以正常工作了，撒花🎉  扩展已经发布到Chrome扩展商店，搜索 [HAR Debugger](https://chromewebstore.google.com/search/HAR%20Debugger) 即可找到欢迎下载使用👏
+
 
 
 
