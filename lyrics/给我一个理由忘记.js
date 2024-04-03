@@ -5,4 +5,7 @@ const sourceLyric = "[00:47.480]雨都停了这片天灰什么呢\n[00:54.480]�
 
 const parsedLyric = parseLyrics(sourceLyric);
 
+console.log('parsedLyric:', parsedLyric);
+
+
 module.exports = parsedLyric;

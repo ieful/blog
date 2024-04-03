@@ -1,9 +1,11 @@
 function parseLyrics(lyricsString) {
     const lines = lyricsString.split('\n');
+    console.log('lines:', lines);
     const result = {};
 
     lines.forEach(line => {
-        const matches = line.match(/\[(\d{2}:\d{2}\.\d{3})\](.*)/);
+        const matches = line.match(/\[(\d{2}:\d{2}\.\d{2,3})\](.*)/);
+        console.log('matches:', matches);
         if (matches && matches.length === 3) {
             const timestamp = matches[1];
             const lyric = matches[2].trim();

@@ -118,7 +118,7 @@ const WaveBg = (props) => {
     )
 
     function parseTime(timeString) {
-        const timeParts = timeString.match(/\[(\d{2}):(\d{2})\.(\d{3})\]/);
+        const timeParts = timeString.match(/\[(\d{2}):(\d{2})\.(\d{2,3})\]/);
         const minutes = parseInt(timeParts[1]);
         const seconds = parseInt(timeParts[2]);
         const milliseconds = parseInt(timeParts[3]);
