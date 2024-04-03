@@ -6,8 +6,8 @@
 }
 
 .audioWrapper .currentLyric {
-    /*position: absolute;*/
-    /*left: 55%;*/
+    background-image: linear-gradient(0deg,#a18cd1 0%, #fbc2eb 100%);
+    -webkit-background-clip: text;
+    color: transparent;
     font-size: 30px;
-    color: #fbc2eb;
 }

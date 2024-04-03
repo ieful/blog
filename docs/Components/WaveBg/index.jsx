@@ -1,18 +1,20 @@
 import React, {useEffect, useRef, useState} from 'react';
 import './index.css';
+// import {shuffle} from "@site/tools/shuffle";
+import {linearGradientColors} from "./colors";
 
 const WaveBg = (props) => {
     const audioRef = useRef(null);
     const lyricRef = useRef(null);
     const [audioStatus, setAudioStatus] = useState('pause');
     const [currentLyric, setCurrentLyric] = useState('');
+    const [currentLyricColor, setCurrentLyricColor] = useState('(-20deg,#b721ff 0%, #21d4fd 100%)');
 
     let lyricsKeys = [];
     let currentIndex = 0;
     if (props.lyric) {
         lyricsKeys = Object.keys(props.lyric);
     }
-
 
     function handleTimeUpdate() {
         const currentTime = audioRef.current?.currentTime;
@@ -38,6 +40,12 @@ const WaveBg = (props) => {
         }
         return () => Ve();
     }, [audioStatus])
+
+
+    useEffect(() => {
+        let randomIndex = Math.floor(Math.random() * linearGradientColors.length);
+        setCurrentLyricColor(linearGradientColors[randomIndex]);
+    }, [currentLyric]);
 
     function xv(t) {
         return Math.floor(Math.random() * t)
@@ -98,7 +106,13 @@ const WaveBg = (props) => {
                 Your browser does not support the audio element.
             </audio>
             {
-                props.lyric && <div ref={lyricRef} className="currentLyric">{currentLyric}</div>
+                props.lyric && (
+                    <div ref={lyricRef}
+                         className="currentLyric"
+                         style={{backgroundImage: `linear-gradient${currentLyricColor}`}}>
+                        {currentLyric}
+                    </div>
+                )
             }
         </div>
     )
