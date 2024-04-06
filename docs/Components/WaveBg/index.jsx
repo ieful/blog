@@ -38,6 +38,8 @@ const WaveBg = (props) => {
             .then(blob => {
                 const blobURL = URL.createObjectURL(blob);
                 audioRef.current.src = blobURL;
+        }).catch(err => {
+            console.log('blobURL转换失败', err)
         })
     }, [])
 
@@ -61,7 +63,7 @@ const WaveBg = (props) => {
     };
 
     function Fv() {
-        var t, e;
+        let t, e;
         const n = window.localStorage.getItem("isDark")
             , i = null === (e = null === (t = null === window || void 0 === window ? void 0 : window.matchMedia) || void 0 === t ? void 0 : t.call(window, "(prefers-color-scheme: dark)")) || void 0 === e ? void 0 : e.matches;
         return !n && i ? i : Boolean(Number(n))
