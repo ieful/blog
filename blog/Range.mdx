@@ -1,0 +1,172 @@
+---
+title: Range 和 Selection
+---
+
+最近对浏览器扩展的开发兴趣颇大，在着手开发一个网页标记扩展，自己一直用着一款网页文档标记类的扩展工具
+
+目前感觉非常好用就是这个叫做 **Beanote** 的扩展
+
+
+<img src='/img/beanote.png' width={500}/>
+<br/>
+
+
+主要功能就一个，可以让你高亮标注网页中你认为重要的内容，并支持给高亮的地方做局部小的注释。
+
+<video controls width={600}>
+    <source src='/video/state.mp4' type='video/mp4'/>
+</video>
+<br/>
+虽然功能很简单，但是感觉在阅读文档时还是挺好用的。正好自己最近的工作中也接触到了扩展的开发，
+
+于是就趁着清明假期想自己实现一个类似功能的扩展，在写代码的过程中学到了一些 "冷门～" 的知识
+
+当前进展如下👇
+
+<video controls width={600}>
+    <source src='/video/mynote.mp4' type='video/mp4'/>
+</video>
+<br/>
+
+目前的功能还不完善，遇到有标签截断的情况还不能很好的处理，努力解决中💪。。
+
+<h6>Range篇</h6>
+
+Selection 和 Range这个两个概念主要是跟鼠标在网页上的选中事件相关的，其中 *Range* 是一对儿代表**边界点**范围的对象，
+
+其包含范围的起始点和范围的结束点。
+
+创建一个 Range 对象跟创建其他的JS对象一样，可以通过构造函数创建
+
+```js
+let range = new Range()
+```
+然后我们就可以通过 **setStart** 和 **setEnd** 来分别设置range对象的起始和结束范围了。
+
+```js
+let range = new Range()
+range.setStart(node, offset);
+range.setEnd(node, offset);
+```
+**setStart** 和 **setEnd** 都接受两个参数，第一个参数可以是文本节点（text node） 或者是一个元素节点（element node），
+这个很重要‼️因为它直接影响了第二个参数的含义.
+
+#### 1、文本节点的情况
+**如果是文本节点，那么offset代表的是文本中跳过字符元素的个数（是节点中的某个位置坐标）**
+
+比如说元素 `<p>Hello</p>`要创建一个包含 `ll` 的range.
+```js
+<p id="p">Hello</p>
+<script>
+  let range = new Range();
+  range.setStart(p.firstChild, 2);
+  range.setEnd(p.firstChild, 4);
+
+  // toString of a range returns its content as text
+  console.log(range); // ll
+</script>
+```
+效果如下：
+![llrange](/img/llrange.png)
+
+2、元素节点的情况
+
+**如果是元素节点，那么offset 代表的是其跳过子节点的个数** (这对于创建包含整个节点而不是在其文本中的某个地方截断的range很方便。)
+
+比如说对于dom  `<p id="p">Example: <i>italic</i> and <b>bold</b></p>`
+
+其树状结构为：
+
+<img src='/img/example.png' width={500}/>
+
+如果要构建一个 `"Example: <i>italic</i>"` 范围的range 应该如何设置开始和结束点呢？
+
+首先分析如下：
+
+<img src='/img/structure.png' width={500}/>
+
+要创建的range由 `<p>` 的两个子节点组成，两个子节点的index 分别是 0 和 1 所以：
+
+1、起始范围点由 *p* 作为父节点 *0* 作为起始的偏移量  `range.setStart(p, 0)`
+
+2、结束范围点同样由 *p* 作为父节点，但是其偏移量应该是 *2* （[) 坐闭右开区间，js中很多方法都是这样，不解释）`range.setEnd(p, 2)`
+
+:::tip
+开始节点和结束节点可以是不同的节点，一个range可以跨越很多不相关的节点，只要结束节点在开始节点之后就行了
+:::
+
+来看一个更长的跨越多个节点的range例子：
+
+<img src='/img/complex.png' width={500}/>
+
+要创建这个range 应该如何设置开始节点和结束节点，及其偏移量呢？
+
+1、首先确定开始节点和结束节点是文本节点还是元素节点，由图可知开始节点和结束节点都应该是文本节点，因为 range开始于 `Example` 文本的第三个字母 *a* 结束于 `bold` 文本的第三个字母 *l*
+
+2、根据上一步的分析分别设置range的start和end
+
+`range.setStart(p.firstChild, 2)`
+
+`range.setEnd(p.querySelector('b').firstChild, 3)`
+
+#### range 对象的属性
+
+<img src='/img/property.png' width={600}/>
+
+主要有以下属性：
+
+<ol>
+    <li>1. startContainer, startOffset 开始节点和其偏移量</li>
+    <li>2. endContainer, endOffset 结束节点和其偏移量</li>
+    <li>3. collapsed 一个布尔值直译代表开始节点和结束节点是否是同一位置，只要记住如果这个值为true则代表range是空，对应到页面就是啥都没选中</li>
+    <li>4. commonAncestorContainer range中所有节点的最近公共祖先节点</li>
+</ol>
+
+
+#### range 对象的方法
+
+除了setStart and setEnd 之外还有其他辅助类的方法：
+
+<ul>
+    <li>1. setStartBefore(node) 将start设置在node之前</li>
+    <li>2. setStartAfter(node) 将start设置在node之后</li>
+    <li>3. setEndBefore(node) 将end设置在node之前</li>
+    <li>4. setEndAfter(node) 将end设置在node之后</li>
+</ul>
+
+:::tip
+所有这些方法中的node都既可以是文本节点又可以是元素节点，同样的如果是文本节点则offset代表文本字符的偏移量，如果是元素节点那么offset代表的是
+跳过的子节点的个数
+:::
+
+还有一些不常用的创建range的方法：
+
+    1. `selectNode(node)`: 设置range为选中整个node
+    2. `selectNodeContents(node)`: 设置range为选中整个node中的内容
+    3. `collapse(toStart)`: 如果里面的 *toStart* 设置为true 代表end=start/start=end,也即collapse设置为true(rang崩溃 ～)
+    4. `cloneRange()`: 克隆一个一摸一样的range
+
+
+
+#### range 对象的编辑方法
+
+当创建了 range对象之后，我们就可以利用下面这些方法来操作里面的内容了
+
+<ol>
+    <li>deleteContents() 将range中的内容从文档中删除</li>
+    <li>extractContents() 将range中的内容移除，并以DocumentFragment的形式返回</li>
+    <li>cloneContents() 克隆一个range中的内容，并以DocumentFragment的形式返回</li>
+    <li>insertNode(node) 在range的开头插入node</li>
+    <li>surroundContents(node) <b>在range的内容外面包裹一层 node</b> 只适用于 range包含完整闭合的标签的情况 </li>
+</ol>
+
+:::caution
+主要是 **surroundContents(node)** 这个方法在设置选中文本高亮的操作中起到关键性的作用，但是其默认只能在包含完整的标签对儿的
+情况下才能适用，如果一个range中的内容只包含了某个标签的起始标签 **<** 或者 闭合标签 **</** 该方法会报错且无法执行，因此对于这
+种跨标签的处理方式需要自行处理，也是目前自己在着手解决的问题之一
+:::
+
+Range篇完～ 😩
+
+
+
