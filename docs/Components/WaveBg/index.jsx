@@ -108,7 +108,7 @@ const WaveBg = (props) => {
             <audio
                 ref={audioRef}
                 controls
-                src=''
+                src={props.songPath}
                 onTimeUpdate={handleTimeUpdate}
                 onPlay={() => setAudioStatus('play')}
                 onPause={() => setAudioStatus('pause')}>
