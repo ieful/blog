@@ -33,6 +33,15 @@ const WaveBg = (props) => {
     }
 
     useEffect(() => {
+        fetch(`${props.songPath}`)
+            .then(response => response.blob())
+            .then(blob => {
+                const blobURL = URL.createObjectURL(blob);
+                audioRef.current.src = blobURL;
+        })
+    }, [])
+
+    useEffect(() => {
         if (audioStatus === 'play') {
             Ev();
         } else {
@@ -99,11 +108,10 @@ const WaveBg = (props) => {
             <audio
                 ref={audioRef}
                 controls
+                src={props.songPath}
                 onTimeUpdate={handleTimeUpdate}
                 onPlay={() => setAudioStatus('play')}
                 onPause={() => setAudioStatus('pause')}>
-                <source src={props.songPath} type="audio/mpeg" />
-                Your browser does not support the audio element.
             </audio>
             {
                 props.lyric && (
