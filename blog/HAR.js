@@ -1,19 +1,17 @@
-import React from "react";
+import React, {useRef} from "react";
 // import harflv from '/static/flv/har.flv';
 // import flvjs from 'flv.js';
 
 const HarDemo = () => {
+    const videoRef = useRef(null);
+    fetch('/video/HAR.mp4')
+        .then(response => response.blob())
+        .then(blob => {
+            const blobURL = URL.createObjectURL(blob);
+            videoRef.current.src = blobURL;
+    })
 
-    // const flvurl = URL.createObjectURL(harflv);
-
-    // let flvPlayer = flvjs.createPlayer({
-    //     type: 'flv',
-    //     url: ''
-    // })
-
-    return (
-        <video controls width="700" src="/video/HAR.mp4" />
-    )
+    return <video ref={videoRef} width={700} controls></video>;
 }
 
 export default HarDemo;
