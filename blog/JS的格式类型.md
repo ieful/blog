@@ -1,6 +1,7 @@
 ---
 slug: js/format-types
 title: JavaScript的不同格式类型
+date: 2023-07-22
 authors: Allen
 tags: [UMD, AMD, CJS, ESModule, IIFE]
 ---
