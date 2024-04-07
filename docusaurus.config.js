@@ -86,7 +86,7 @@ const config = {
             type: 'docSidebar',
             sidebarId: 'meSidebar', // 读书目录
             position: 'left',
-            label: '联系我'
+            label: 'Me'
           },
           // {
           //   href: 'https://github.com/facebook/docusaurus',
