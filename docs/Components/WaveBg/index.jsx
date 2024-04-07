@@ -59,9 +59,12 @@ const WaveBg = (props) => {
     }, [currentLyric]);
 
     function xv(t) {
-        return Math.floor(Math.random() * t)
+        return Math.floor(Math.random() * t) // 返回随机生成的整数
     };
 
+
+    // 确定当前页面是否处于暗色模式
+    // 通过 prefers-color-scheme: dark 媒体查询可以检测用户的系统是否处于暗色模式
     function Fv() {
         let t, e;
         const n = window.localStorage.getItem("isDark")
@@ -69,6 +72,11 @@ const WaveBg = (props) => {
         return !n && i ? i : Boolean(Number(n))
     };
 
+
+    // 用于生成一个随机的十六进制颜色
+    // 使用 xv(255) 三次生成三个 0 到 255 之间的随机整数，表示红、绿、蓝分量。
+    // 将这三个整数转换为十六进制字符串，并拼接为一个 RGB 颜色字符串。
+    // 返回格式为 #RRGGBB 的随机颜色值。
     function Av() {
         const t = xv(255)
             , e = xv(255)
@@ -84,8 +92,10 @@ const WaveBg = (props) => {
     }
 
     function Ev() {
-        if (Fv())
-            return;
+        // if (Fv()) {
+        //     // 暗色模式不执行
+        //     return;
+        // }
         clearInterval(Iv);
         const t = document.createElement("div")
             , e = xv(360);
