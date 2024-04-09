@@ -51,7 +51,7 @@ const increase = (total, value) => total + value;
  */
 const decrease = (total, value) => total - value;
 
-var others = {
+let others = {
   a: 1,
   b: 2,
   c: () => 3,
@@ -139,7 +139,7 @@ exports = '指向其他内存区'; // 注意⚠️：这里将exports重新赋�
 
 
 //test.js 
-var a = require('/example'); // 在test.js中通过 `require()` 方法引入example
+let a = require('/example'); // 在test.js中通过 `require()` 方法引入example
 console.log(a) // 打印为 {a : 200}; // 证明在node中 `require()` 方法引入的内容是module.exports对象而不是exports!!
 ```
 :::tip
@@ -163,20 +163,21 @@ export命令用于规定模块的对外接口，import命令用于输入其他�
 写法一：用三个export命令对外输出三个变量
 ```bash
 // profile.js 
-export var firstName = 'Michael';
-export var lastName = 'Jackson';
-export var year = 1958;
+export let firstName = 'Michael';
+export let lastName = 'Jackson';
+export let year = 1958;
 ```
 
 写法二：使用大括号指定所要输出的一组变量👍
 ```bash
 // profile.js 
-var firstName = 'Michael';
-var lastName = 'Jackson';
-var year = 1958;
+let firstName = 'Michael';
+let lastName = 'Jackson';
+let year = 1958;
+export {firstName, lastName, year};
 ```
 :::tip
-第二种与前一种写法（直接放置在var语句前）是等价的，但是应该优先考虑使用这种写法。因为这样就可以在脚本尾部，一眼看清楚输出了哪些变量。
+第二种与前一种写法（直接放置在let语句前）是等价的，但是应该优先考虑使用这种写法。因为这样就可以在脚本尾部，一眼看清楚输出了哪些变量。
 :::
 
 通常情况下，export输出的变量就是本来的名字，但是可以使用as关键字重命名。像下面这样👇
@@ -202,7 +203,7 @@ export {
 export 1;
 
 // 报错
-var m = 1;
+let m = 1;
 export m;
 ```
 
@@ -210,14 +211,14 @@ export m;
 
 ```bash
 // 写法一
-export var m = 1;
+export let m = 1;
 
 // 写法二
-var m = 1;
+let m = 1;
 export {m};
 
 // 写法三
-var n = 1;
+let n = 1;
 export {n as m};
 ```
 上面三种写法都是正确的，规定了对外的接口m。其他脚本可以通过这个接口，取到值1。它们的实质是，在接口名与模块内部变量之间，建立了一一对应的关系。
@@ -229,7 +230,7 @@ export {n as m};
 另外，export语句输出的接口，与其对应的值是动态绑定关系，即通过该接口，可以取到模块内部实时的值。
 
 ```bash
-export var foo = 'bar';
+export let foo = 'bar';
 setTimeout(() => foo = 'baz', 500);
 ```
 上面代码输出变量foo，值为bar，500 毫秒之后变成baz。
