@@ -9,6 +9,7 @@ let buffer;
 const WaveBg = (props) => {
     const audioRef = useRef(null);
     const lyricRef = useRef(null);
+    const canvasWrapperRef = useRef(null);
     const canvasRef = useRef(null);
     const isInitRef = useRef(false);
     const [audioStatus, setAudioStatus] = useState('pause');
@@ -191,6 +192,48 @@ const WaveBg = (props) => {
         isInitRef.current = true;
     }
 
+    // 拖拽限位
+    let x = 0;
+    let y = 0;
+    const handleMouseDown = (e) => {
+        e.stopPropagation();
+        x = e.clientX;
+        y = e.clientY;
+        document.addEventListener('mousemove', mouseMoveHandler);
+        document.addEventListener('mouseup', mouseUpHandler);
+    }
+    const mouseMoveHandler = (e) => {
+        const clientWidth = document.documentElement.clientWidth || document.body.clientWidth;
+        const clientHeight = document.documentElement.clientHeight || document.body.clientHeight;
+        const dx = e.clientX - x;
+        const dy = e.clientY - y;
+
+        // 限位，边缘不超出屏幕
+        if (canvasWrapperRef.current) {
+            if (canvasWrapperRef.current.offsetLeft + dx < 0) {
+                canvasWrapperRef.current.style.left = '0px'; // 左侧限位
+            } else if (canvasWrapperRef.current.offsetLeft + dx > clientWidth - 600) {
+                canvasWrapperRef.current.style.left = `${clientWidth - 600}px`; // 右侧限位
+            } else {
+                canvasWrapperRef.current.style.left = `${canvasWrapperRef.current.offsetLeft + dx}px`; // 左右移动范围
+            }
+            if (canvasWrapperRef.current.offsetTop + dy < 0) {
+                canvasWrapperRef.current.style.top = '0px'; // 顶部限位
+            } else if (canvasWrapperRef.current.offsetTop + dy > clientHeight - canvasWrapperRef.current.offsetHeight) {
+                canvasWrapperRef.current.style.top = clientHeight - canvasWrapperRef.current.offsetHeight > 0 ? `${clientHeight - canvasWrapperRef.current.offsetHeight}px` : '0px'; // 底部限位
+            } else {
+                canvasWrapperRef.current.style.top = `${canvasWrapperRef.current.offsetTop + dy}px`; // 上下活动范围
+            }
+        }
+        x = e.clientX;
+        y = e.clientY;
+    }
+
+    const mouseUpHandler = (e) => {
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
+    }
+
 
     return (
         <div className="audioWrapper">
@@ -203,18 +246,17 @@ const WaveBg = (props) => {
                 onPause={handleAudioPause}>
             </audio>
             {
-                props.lyric ?(
+                props.lyric && (
                     <div ref={lyricRef}
                          className="currentLyric"
                          style={{backgroundImage: `linear-gradient${currentLyricColor}`}}>
                         {currentLyric}
                     </div>
-                ) : (
-                    <div className="canvasWrapper">
-                        <canvas ref={canvasRef} id='canvas' width={600} height={400}></canvas>
-                    </div>
                 )
             }
+            <div className="canvasWrapper" ref={canvasWrapperRef} onMouseDown={handleMouseDown}>
+                <canvas ref={canvasRef} id='canvas' width={400} height={400}></canvas>
+            </div>
         </div>
     )
 
