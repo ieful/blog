@@ -3,12 +3,17 @@ import './index.css';
 // import {shuffle} from "@site/tools/shuffle";
 import {linearGradientColors} from "./colors";
 
+let analyser;
+let buffer;
+
 const WaveBg = (props) => {
     const audioRef = useRef(null);
     const lyricRef = useRef(null);
+    const canvasRef = useRef(null);
     const [audioStatus, setAudioStatus] = useState('pause');
     const [currentLyric, setCurrentLyric] = useState('');
     const [currentLyricColor, setCurrentLyricColor] = useState('(-20deg,#b721ff 0%, #21d4fd 100%)');
+    const [isInit, setIsInit] = useState(false);
 
     let lyricsKeys = [];
     let currentIndex = 0;
@@ -30,7 +35,52 @@ const WaveBg = (props) => {
                 break;
             }
         }
+        update();
     }
+
+    function initCvs() {
+        let cvs = canvasRef.current;
+        let ctx = cvs.getContext('2d');
+        const size = 500;
+        cvs.width = size * devicePixelRatio;
+        cvs.height = size * devicePixelRatio;
+        cvs.style.width = cvs.style.height = size + 'px';
+    }
+
+    function draw(datas, maxValue) {
+        const r = 50 * devicePixelRatio;
+        const center = canvasRef.current.width / 2;
+        canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+
+        const hslStep = 360 / (datas.length - 1);
+        const maxLen = canvasRef.current.width / 2 - r;
+        const minLen = 2 * devicePixelRatio;
+        for (let i = 0; i < datas.length; i++) {
+            canvasRef.current.getContext('2d').beginPath();
+            const len = Math.max((datas[i] / maxValue) * maxLen, minLen);
+            const rotate = hslStep * i;
+            canvasRef.current.getContext('2d').strokeStyle = `hsl(${rotate}deg, 65%, 65%)`;
+            canvasRef.current.getContext('2d').lineWidth = minLen;
+            const rad = (rotate * Math.PI) / 180;
+            const beginX = center + Math.cos(rad) * r;
+            const beginY = center + Math.sin(rad) * r;
+            const endX = center + Math.cos(rad) * (r + datas[i] + 2);
+            const endY = center + Math.sin(rad) * (r + datas[i] + 2);
+            canvasRef.current.getContext('2d').moveTo(beginX, beginY);
+            canvasRef.current.getContext('2d').lineTo(endX, endY);
+            canvasRef.current.getContext('2d').stroke();
+        }
+    }
+
+    useEffect(() => {
+        if (canvasRef.current) {
+            // initCvs();
+            draw(new Array(100).fill(0), 255);
+            // let ctx = canvasRef.current.getContext('2d');
+            // ctx.rect(10,10,150,100);
+            // ctx.stroke();
+        }
+    }, [])
 
     useEffect(() => {
         fetch(`${props.songPath}`)
@@ -52,7 +102,6 @@ const WaveBg = (props) => {
         return () => Ve();
     }, [audioStatus])
 
-
     useEffect(() => {
         let randomIndex = Math.floor(Math.random() * linearGradientColors.length);
         setCurrentLyricColor(linearGradientColors[randomIndex]);
@@ -62,7 +111,6 @@ const WaveBg = (props) => {
         return Math.floor(Math.random() * t) // 返回随机生成的整数
     };
 
-
     // 确定当前页面是否处于暗色模式
     // 通过 prefers-color-scheme: dark 媒体查询可以检测用户的系统是否处于暗色模式
     function Fv() {
@@ -71,7 +119,6 @@ const WaveBg = (props) => {
             , i = null === (e = null === (t = null === window || void 0 === window ? void 0 : window.matchMedia) || void 0 === t ? void 0 : t.call(window, "(prefers-color-scheme: dark)")) || void 0 === e ? void 0 : e.matches;
         return !n && i ? i : Boolean(Number(n))
     };
-
 
     // 用于生成一个随机的十六进制颜色
     // 使用 xv(255) 三次生成三个 0 到 255 之间的随机整数，表示红、绿、蓝分量。
@@ -115,6 +162,37 @@ const WaveBg = (props) => {
     }
 
 
+    function handleAudioOnPlay() {
+        setAudioStatus('play');
+
+        const audioCtx = new AudioContext();
+        const source = audioCtx.createMediaElementSource(audioRef.current);
+
+        // 音频数据分析器
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 512;
+        buffer = new Uint8Array(analyser.frequencyBinCount);
+
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        setIsInit(true);
+    }
+
+    function update() {
+        requestAnimationFrame(update);
+        if(!isInit) {
+            return;
+        }
+        analyser.getByteFrequencyData(buffer);
+        const offset = Math.floor((buffer.length * 2) / 3);
+        const datas = new Array(offset * 2);
+        for (let i = 0; i < offset; i++) {
+            datas[i] = datas[datas.length - i - 1] = buffer[i];
+        }
+        draw(datas, 255);
+    }
+
+
     return (
         <div className="audioWrapper">
             <audio
@@ -122,15 +200,19 @@ const WaveBg = (props) => {
                 controls
                 src={props.songPath}
                 onTimeUpdate={handleTimeUpdate}
-                onPlay={() => setAudioStatus('play')}
+                onPlay={handleAudioOnPlay}
                 onPause={() => setAudioStatus('pause')}>
             </audio>
             {
-                props.lyric && (
+                props.lyric ?(
                     <div ref={lyricRef}
                          className="currentLyric"
                          style={{backgroundImage: `linear-gradient${currentLyricColor}`}}>
                         {currentLyric}
+                    </div>
+                ) : (
+                    <div className="canvasWrapper">
+                        <canvas ref={canvasRef} id='canvas' width={800} height={800}></canvas>
                     </div>
                 )
             }

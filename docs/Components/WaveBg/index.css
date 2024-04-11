@@ -11,3 +11,9 @@
     color: transparent;
     font-size: 30px;
 }
+
+.audioWrapper .canvasWrapper {
+    position: absolute;
+    right: 450px;
+    top: 100px;
+}
