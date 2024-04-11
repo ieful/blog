@@ -7,6 +7,7 @@ import HarDemo from './HAR';
 import Chat from './Chat';
 import Write from "./Write";
 import Gpt from "./GPT";
+import pdf from '/static/video/pdf.mp4';
 
 ### 扩展一： HAR Debugger 一个可以帮助开发者快速定位客户网络或者产品问题的工具插件
 
@@ -268,6 +269,10 @@ const debuggerEventListener = (debuggeeId, method, params) => {
 ##### 网页划词翻译能力
 
 <Write></Write>
+
+✨支持直接在PDF中划词哦～✨  申请了专利技术😉
+
+<video src={pdf} controls width={700}/>
 
 这里是用了 Shadowdom 封装了元素插入到文档中实现的
 
