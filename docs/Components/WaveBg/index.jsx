@@ -212,12 +212,12 @@ const WaveBg = (props) => {
         if (canvasWrapperRef.current) {
             if (canvasWrapperRef.current.offsetLeft + dx < 0) {
                 canvasWrapperRef.current.style.left = '0px'; // 左侧限位
-            } else if (canvasWrapperRef.current.offsetLeft + dx > clientWidth - 600) {
-                canvasWrapperRef.current.style.left = `${clientWidth - 600}px`; // 右侧限位
+            } else if (canvasWrapperRef.current.offsetLeft + dx > clientWidth) {
+                canvasWrapperRef.current.style.left = `${clientWidth}px`; // 右侧限位
             } else {
                 canvasWrapperRef.current.style.left = `${canvasWrapperRef.current.offsetLeft + dx}px`; // 左右移动范围
             }
-            if (canvasWrapperRef.current.offsetTop + dy < 0) {
+            if (canvasWrapperRef.current.offsetTop < 0) {
                 canvasWrapperRef.current.style.top = '0px'; // 顶部限位
             } else if (canvasWrapperRef.current.offsetTop + dy > clientHeight - canvasWrapperRef.current.offsetHeight) {
                 canvasWrapperRef.current.style.top = clientHeight - canvasWrapperRef.current.offsetHeight > 0 ? `${clientHeight - canvasWrapperRef.current.offsetHeight}px` : '0px'; // 底部限位
@@ -255,7 +255,7 @@ const WaveBg = (props) => {
                 )
             }
             <div className="canvasWrapper" ref={canvasWrapperRef} onMouseDown={handleMouseDown}>
-                <canvas ref={canvasRef} id='canvas' width={400} height={400}></canvas>
+                <canvas ref={canvasRef} id='canvas' width={600} height={500}></canvas>
             </div>
         </div>
     )
