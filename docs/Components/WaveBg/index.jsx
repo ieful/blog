@@ -10,10 +10,42 @@ const WaveBg = (props) => {
     const audioRef = useRef(null);
     const lyricRef = useRef(null);
     const canvasRef = useRef(null);
+    const isInitRef = useRef(false);
     const [audioStatus, setAudioStatus] = useState('pause');
     const [currentLyric, setCurrentLyric] = useState('');
     const [currentLyricColor, setCurrentLyricColor] = useState('(-20deg,#b721ff 0%, #21d4fd 100%)');
-    const [isInit, setIsInit] = useState(false);
+
+
+    useEffect(() => {
+        if (canvasRef.current) {
+            draw(new Array(100).fill(0), 255);
+        }
+    }, [])
+
+    // useEffect(() => {
+    //     fetch(`${props.songPath}`)
+    //         .then(response => response.blob())
+    //         .then(blob => {
+    //             const blobURL = URL.createObjectURL(blob);
+    //             audioRef.current.src = blobURL;
+    //         }).catch(err => {
+    //         console.log('blobURL转换失败', err)
+    //     })
+    // }, [])
+
+    useEffect(() => {
+        if (audioStatus === 'play') {
+            Ev();
+        } else {
+            Ve();
+        }
+        return () => Ve();
+    }, [audioStatus])
+
+    useEffect(() => {
+        let randomIndex = Math.floor(Math.random() * linearGradientColors.length);
+        setCurrentLyricColor(linearGradientColors[randomIndex]);
+    }, [currentLyric]);
 
     let lyricsKeys = [];
     let currentIndex = 0;
@@ -36,15 +68,6 @@ const WaveBg = (props) => {
             }
         }
         update();
-    }
-
-    function initCvs() {
-        let cvs = canvasRef.current;
-        let ctx = cvs.getContext('2d');
-        const size = 500;
-        cvs.width = size * devicePixelRatio;
-        cvs.height = size * devicePixelRatio;
-        cvs.style.width = cvs.style.height = size + 'px';
     }
 
     function draw(datas, maxValue) {
@@ -71,37 +94,6 @@ const WaveBg = (props) => {
             canvasRef.current.getContext('2d').stroke();
         }
     }
-
-    useEffect(() => {
-        if (canvasRef.current) {
-            draw(new Array(100).fill(0), 255);
-        }
-    }, [])
-
-    useEffect(() => {
-        fetch(`${props.songPath}`)
-            .then(response => response.blob())
-            .then(blob => {
-                const blobURL = URL.createObjectURL(blob);
-                audioRef.current.src = blobURL;
-        }).catch(err => {
-            console.log('blobURL转换失败', err)
-        })
-    }, [])
-
-    useEffect(() => {
-        if (audioStatus === 'play') {
-            Ev();
-        } else {
-            Ve();
-        }
-        return () => Ve();
-    }, [audioStatus])
-
-    useEffect(() => {
-        let randomIndex = Math.floor(Math.random() * linearGradientColors.length);
-        setCurrentLyricColor(linearGradientColors[randomIndex]);
-    }, [currentLyric]);
 
     function xv(t) {
         return Math.floor(Math.random() * t) // 返回随机生成的整数
@@ -158,25 +150,9 @@ const WaveBg = (props) => {
     }
 
 
-    function handleAudioOnPlay() {
-        setAudioStatus('play');
-
-        const audioCtx = new AudioContext();
-        const source = audioCtx.createMediaElementSource(audioRef.current);
-
-        // 音频数据分析器
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 512;
-        buffer = new Uint8Array(analyser.frequencyBinCount);
-
-        source.connect(analyser);
-        analyser.connect(audioCtx.destination);
-        setIsInit(true);
-    }
-
     function update() {
         requestAnimationFrame(update);
-        if(!isInit) {
+        if(!isInitRef.current) {
             return;
         }
         analyser.getByteFrequencyData(buffer);
@@ -188,6 +164,30 @@ const WaveBg = (props) => {
         draw(datas, 255);
     }
 
+    function handleAudioPause() {
+        setAudioStatus('pause');
+        draw(new Array(100).fill(0), 255);
+    }
+
+    function handleAudioPlay() {
+        setAudioStatus('play');
+        if (isInitRef.current) {
+            return;
+        }
+        // 创建音频上下文
+        const audioCtx = new AudioContext();
+        const source = audioCtx.createMediaElementSource(audioRef.current);
+
+        // 音频数据分析器
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 512;
+        buffer = new Uint8Array(analyser.frequencyBinCount);
+
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        isInitRef.current = true;
+    }
+
 
     return (
         <div className="audioWrapper">
@@ -196,8 +196,8 @@ const WaveBg = (props) => {
                 controls
                 src={props.songPath}
                 onTimeUpdate={handleTimeUpdate}
-                onPlay={handleAudioOnPlay}
-                onPause={() => setAudioStatus('pause')}>
+                onPlay={handleAudioPlay}
+                onPause={handleAudioPause}>
             </audio>
             {
                 props.lyric ?(
