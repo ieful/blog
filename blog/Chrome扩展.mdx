@@ -269,9 +269,207 @@ const debuggerEventListener = (debuggeeId, method, params) => {
 
 <Write></Write>
 
-##### 改版UI加入历史对话
+这里是用了 Shadowdom 封装了元素插入到文档中实现的
 
+```js
+// 扩展的content.js
+const injectShadowDom = () => {
+  const rootElement = document.createElement('div');
+  rootElement.id = 'aiAssistRoot';
+  // 防止重复注入
+  const rootDom = document.getElementById('aiAssistRoot');
+  rootDom && rootDom.remove();
+  // attachShadow to shadowHost
+  const shadowRoot = rootElement.attachShadow({mode: 'open'});
+  let reactContainer = document.createElement('div');
+  reactContainer.id = 'reactContainer';
+  shadowRoot.appendChild(reactContainer);
+  document.body.appendChild(rootElement);
+  // ⚠️注意我们的样式需要通过这种方式插入到shadowdom中
+  const styleNode = document.createElement('style');
+  const styleUrl = chrome.runtime.getURL('content.css');
+  fetch(styleUrl).then(res => res.text()).then(styleData => {
+    styleNode.textContent = styleData;
+    shadowRoot.appendChild(styleNode);
+    // 使用Antd 的 StyleProvider 将antd的样式也插入到shadowdom中
+    // <Scribe/> 就是我们页面上看到的划词和对话组件了
+    createRoot(reactContainer).render(
+        <StyleProvider container={shadowRoot}>
+          <Scribe/>
+        </StyleProvider>
+    )
+  })
+}
+
+injectShadowDom();
+```
+
+这里需要注意控制 组件拖拽的时候不要“溢出”屏幕边缘
+
+```js
+// 拖拽限位
+let x = 0;
+let y = 0;
+const mouseMoveHandler = (e: any) => {
+    const clientWidth = document.documentElement.clientWidth || document.body.clientWidth;
+    const clientHeight = document.documentElement.clientHeight || document.body.clientHeight;
+    const dx = e.clientX - x;
+    const dy = e.clientY - y;
+
+    // 限位，边缘不超出屏幕
+    if (freeBoxRef.current) {
+      if (freeBoxRef.current.offsetLeft + dx < 0) {
+        freeBoxRef.current.style.left = '0px'; // 左侧限位
+      } else if (freeBoxRef.current.offsetLeft + dx > clientWidth - 626) {
+        freeBoxRef.current.style.left = `${clientWidth - 626}px`; // 右侧限位
+      } else {
+        freeBoxRef.current.style.left = `${freeBoxRef.current.offsetLeft + dx}px`; // 左右移动范围
+      }
+      if (freeBoxRef.current.offsetTop + dy < 0) {
+        freeBoxRef.current.style.top = '0px'; // 顶部限位
+      } else if (freeBoxRef.current.offsetTop + dy > clientHeight - freeBoxRef.current.offsetHeight) {
+        freeBoxRef.current.style.top = clientHeight - freeBoxRef.current.offsetHeight > 0 ? `${clientHeight - freeBoxRef.current.offsetHeight}px` : '0px'; // 底部限位
+      } else {
+        freeBoxRef.current.style.top = `${freeBoxRef.current.offsetTop + dy}px`; // 上下活动范围
+      }
+    }
+    x = e.clientX;
+    y = e.clientY;
+  }
+```
+
+##### 改版UI加入历史对话
 <Gpt></Gpt>
+
+#### 后记
+
+网页划词这部门的功能，因为我们在 *content.js* 中加入了 React 组件的创建 (createRoot) 所以，content.js需要单独的编译打包
+单独编写 *vite-content.js*
+
+```js
+/*vite-content.js*/
+export default defineConfig({
+  root: 'src',
+  plugins: [
+    react(),
+    babel({
+      babelHelpers: 'bundled',
+      exclude: 'node_modules/**',
+    })
+  ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src')
+    }
+  },
+  // ⚠️注意build的配置
+  build: {
+    outDir: '../dist',
+    assetsInlineLimit: 8392,
+    rollupOptions: {
+      input: {
+        'content': '/ext/content.js' // 打包入口设置
+      },
+      output: {
+        entryFileNames: '[name].js', // 打包的结果需要保持文件名一致
+        // ⚠️ 不可以使用 iife 的方式，iife 会把 js 和 css 都打包到一起
+        // format: 'iife',
+
+        // 配置打包出的其他资源，这里其实就是我们的样式代码，命名为 content.css
+        // 这样就可以通过 const styleUrl = chrome.runtime.getURL('content.css');
+        // 然后 fetch(styleUrl).then...的方式拿到我们的样式代码了
+        assetFileNames: 'content.[ext]'
+      }
+    },
+  }
+})
+```
+另外我的请求也放到后台脚本 *background.js* 中去了，这样用户在页面的 devtools 的网络请求中就不会看到扩展的请求了
+实现更好的封装和隐藏🫥,此时前台通过事件触发后台发起请求，再从后台接受返回的响应就需要一套良好的通信机制，在Chrome扩展
+中主要用两种通信的方式：
+
+1、chrome.runtime.sendMessage/chrome.tabs.sendMessage短链接的方式
+2、chrome.runtime.connect/chrome.tabs.connect长链接的方式
+
+短连接的话就是挤牙膏一样，我发送一下，你收到了再回复一下，如果对方不回复，你只能重新发，而长连接类似WebSocket会一直建立连接，双方可以随时互发消息。
+
+这里开始我使用的是短链接的方式，但是发现服务端SSE推送的数据流过来的时候，需要不断的触发 sendMessage 和 onMessage 经常会出现消息错乱，同一个消息
+
+内容重复了多次的bug，改成长链接的方式就好了👌。
+
+```js
+/*content.js向background.js 发起长链接*/
+const port = chrome.runtime.connect({name: "exampleName"}); // 需要传递一个带name的对象，返回一个port
+...
+// 之后就能利用这个port进行消息的发送和响应了
+
+// 发送请求
+port.postMessage({
+  type: 'gptRequest',
+  payload: {
+    params
+  }
+});
+// 接受响应
+port.onMessage.addListener(msg => {
+    ...
+})
+
+```
+
+```js
+/*background.js中监听来自前台的链接请求和消息*/
+chrome.runtime.onConnect.addListener(port => {
+    // 区分消息通道
+    if (port.name === 'exampleName') {
+        port.onMessage.addListener(msg => {
+            if (msg.type === 'aiRequest') {
+                // 可以在这里发起请求了，因为服务端返回的是流式数据，所以我采用的fetch来处理
+                const {params} = msg.payload;
+                controller = new AbortController(); // 终止信号
+                const {signal} = controller;
+                requestAi(params, signal).then(res => {
+                    const reader = res.body?.getReader();
+                    const decoder = new TextDecoder('utf-8');
+                    return new ReadableStream({
+                      start(controller) {
+                        function push() {
+                          reader?.read().then(({done, value}) => {
+                            if (done) {
+                              port.postMessage({type: 'gptResponseDown'}); // 响应结束
+                              return;
+                            }
+                            let str = decoder.decode(value);
+                            if (str.includes('error') && str.includes('code') && !str.startsWith('data: ') && !str.includes('choices')) {
+                              // 报错
+                              port.postMessage({type: 'gptResponseError'}); // 响应报错
+                              controller.close();
+                              return;
+                            }
+                            str = str.split('\n')
+                                .filter((line) => line.startsWith('data: ') && line.includes('choices'))
+                                .map((line) => JSON.parse(line.replace('data: ', '')).choices[0].delta.content).join('');
+                            port.postMessage({
+                              type: 'gptResponseValue',
+                              payload: {
+                                value: str
+                              }
+                            });
+                            controller.enqueue(value);
+                            push();
+                          })
+                        }
+                        push();
+                      }
+                    })
+                })
+            } else if (msg.type === 'abortRequest') {
+              controller.abort(); // 会报一个DOMException的异常暂时无法捕获到不影响业务🤷‍♀️
+            }
+        })
+    }
+})
+```
 
 
 
