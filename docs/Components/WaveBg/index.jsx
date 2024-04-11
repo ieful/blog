@@ -71,6 +71,9 @@ const WaveBg = (props) => {
     }
 
     function draw(datas, maxValue) {
+        if (!canvasRef.current) {
+            return;
+        }
         const r = 30 * devicePixelRatio;
         const center = canvasRef.current.width / 2;
         canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
