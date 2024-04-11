@@ -48,7 +48,7 @@ const WaveBg = (props) => {
     }
 
     function draw(datas, maxValue) {
-        const r = 50 * devicePixelRatio;
+        const r = 30 * devicePixelRatio;
         const center = canvasRef.current.width / 2;
         canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
@@ -74,11 +74,7 @@ const WaveBg = (props) => {
 
     useEffect(() => {
         if (canvasRef.current) {
-            // initCvs();
             draw(new Array(100).fill(0), 255);
-            // let ctx = canvasRef.current.getContext('2d');
-            // ctx.rect(10,10,150,100);
-            // ctx.stroke();
         }
     }, [])
 
@@ -212,7 +208,7 @@ const WaveBg = (props) => {
                     </div>
                 ) : (
                     <div className="canvasWrapper">
-                        <canvas ref={canvasRef} id='canvas' width={800} height={800}></canvas>
+                        <canvas ref={canvasRef} id='canvas' width={600} height={400}></canvas>
                     </div>
                 )
             }
