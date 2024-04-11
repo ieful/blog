@@ -1,0 +1,92 @@
+---
+slug: Renderondemand
+title: Echar图表📈按需渲染,及底图设置
+---
+import axjz from '/static/video/axjz.mp4';
+import empty from '/static/img/emptyChart.png';
+
+看这样一个效果：
+<video src={axjz} width={700} controls/>
+
+这是用在React中使用Echars做的一个根据用户的滑动 "按需渲染" 的页面效果
+当图表无数据时效果如下👇，对于每种类型的图表会有一个对应的底图显示在图表的位置。
+
+<img src={empty} width={700} alt="empty" />
+
+
+其中用到了 *IntersectionObserver* 的对象可见观测API，对图表是否进入可视区进行了观测
+
+
+
+
+```js
+// 自定义hooks 抽离各图表公共的时间选择控件逻辑
+export const useDateRange = () => {
+    const [timeRange, setTimeRange] = useState([moment().subtract(7, 'day'), moment()]);
+    const statUnitOptions: StatUnitOptions = useMemo(() => {
+        let intervalDays = moment(timeRange[1]).diff(moment(timeRange[0]), 'days'); // 间隔天数
+        if (intervalDays === 0) {
+            return {
+                toggleUnits: [{label: '时', value: 'hour'}],
+                activeUnit: {label: '时', value: 'hour'}
+            }
+        } else if (intervalDays > 0 && intervalDays <= 6) {
+            return {
+                toggleUnits: [{label: '日', value: 'day'}],
+                activeUnit: {label: '日', value: 'day'}
+            }
+        } else if (intervalDays > 6 && intervalDays <= 35) {
+            return {
+                toggleUnits: [{ label: '日', value: 'day' }, { label: '周', value: 'week' }],
+                activeUnit: { label: '日', value: 'day' }
+            }
+        } else {
+            return {
+                toggleUnits: [{ label: '周', value: 'week' }, { label: '月', value: 'month' }],
+                activeUnit: { label: '周', value: 'week' }
+            }
+        }
+    }, [timeRange]);
+    const [currentUnit, setCurrentUnit] = useState<StatType>(statUnitOptions.activeUnit.value);
+
+    useEffect(() => {
+        setCurrentUnit(statUnitOptions.activeUnit.value);
+    }, [statUnitOptions]);
+    return {timeRange, setTimeRange, statUnitOptions, currentUnit, setCurrentUnit}
+}
+````
+
+
+```js
+// Echart设置底图的方法
+const emptyOption = (typeImg: any) => {
+    return {
+        title: {
+            text: ' {a|}',
+            subtext: '暂无数据',
+            x: 'center',
+            y: 'center',
+            itemGap: -55,
+            textStyle: {
+                rich: {
+                    a: {
+                        width: 200,
+                        height: 150,
+                        backgroundColor: {
+                            image: typeImg,
+                        }
+                    },
+                }
+            },
+            subtextStyle: {
+                fontSize: 12,
+                color: '#525966'
+            }
+        }
+    }
+}
+```
+
+
+
+
