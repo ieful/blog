@@ -1,0 +1,21 @@
+---
+slug: scope
+title: 作用域
+---
+
+
+### 求以下代码的打印结果
+
+```js
+var a = 10;
+
+function test() {
+    console.log(a);
+    a = 100;
+    console.log(this.a);
+    var a;
+    console.log(a);
+}
+```
+
+追问： 如果注释掉 test中的第四行 ** var a;** 打印结果有什么变化？

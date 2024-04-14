@@ -1,0 +1,41 @@
+---
+slug: defineProperty
+title: vue2原理
+---
+
+
+### 求以下代码的打印输出
+
+
+```js
+var option = {
+    data: {
+        a: 1
+    }
+}
+
+class Component {
+    constructor(opt) {
+        this.data = opt.data;
+        Object.defineProperty(this.data, 'a', {
+            get: function () {
+                console.log('get val');
+                return this._a;
+            },
+            set: function (newValue) {
+                console.log('set val' + newValue);
+                this._a = newValue;
+            }
+        })
+    }
+}
+
+var c1 = new Component(option);
+var c2 = new Component(option);
+
+c1.data.a = 3;
+c2.data.a = 5;
+
+console.log('c1:' + c1.data.a);
+console.log('c2:' + c2.data.a);
+```

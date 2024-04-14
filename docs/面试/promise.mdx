@@ -1,0 +1,21 @@
+---
+slug: promise
+title: promise
+---
+
+
+### 求以下代码的输出(日志打印顺序)
+
+```js
+const promise = new Promise((resolve, reject) => {
+    console.log(1);
+    resolve();
+    console.log(2);
+})
+
+promise.then(() => {
+    console.log(3);
+})
+
+console.log(4);
+```
