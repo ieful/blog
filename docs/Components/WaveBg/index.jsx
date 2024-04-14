@@ -75,7 +75,7 @@ const WaveBg = (props) => {
         if (!canvasRef.current) {
             return;
         }
-        const r = 30 * devicePixelRatio;
+        const r = 4 + 20 * devicePixelRatio;
         const center = canvasRef.current.width / 2;
         canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
@@ -91,8 +91,8 @@ const WaveBg = (props) => {
             const rad = (rotate * Math.PI) / 180;
             const beginX = center + Math.cos(rad) * r;
             const beginY = center + Math.sin(rad) * r;
-            const endX = center + Math.cos(rad) * (r + datas[i] + 2);
-            const endY = center + Math.sin(rad) * (r + datas[i] + 2);
+            const endX = center + Math.cos(rad) * (r + len);
+            const endY = center + Math.sin(rad) * (r + len);
             canvasRef.current.getContext('2d').moveTo(beginX, beginY);
             canvasRef.current.getContext('2d').lineTo(endX, endY);
             canvasRef.current.getContext('2d').stroke();
