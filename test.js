@@ -1,3 +1,7 @@
+/**
+ * 数组去重
+ * @type {[string,null,null,undefined,{},{name: string},{name: string},{title: string},{name: undefined},null]}
+ */
 const arr = [
     'null',
     null,
@@ -49,4 +53,38 @@ function main(sourceArr) {
     return result;
 }
 
-console.log(main(arr));
+// console.log(main(arr));
+
+/**
+ * this 指针
+ */
+
+var length = 10;
+var obj1 = {
+    length: 6,
+    method: function () {
+        console.log(this.length)
+    }
+}
+
+var obj2 = {
+    length: 3,
+    method: function (fn) {
+        fn();
+        arguments[0]();
+    }
+}
+
+// obj2.method(obj1.method, obj2.method); // 求打印输出结果
+
+function demo() {
+    console.log(this.length);
+}
+
+let testArr = [1,2,3, demo];
+
+testArr[3]();
+
+testArr[5] = demo;
+
+testArr[5]();
