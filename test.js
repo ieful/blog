@@ -77,14 +77,15 @@ var obj2 = {
 
 // obj2.method(obj1.method, obj2.method); // 求打印输出结果
 
-function demo() {
-    console.log(this.length);
+
+var a = 10;
+function test() {
+    // var a;
+    console.log(a);
+    a = 100;
+    console.log(this.a);
+
+    console.log(a);
 }
 
-let testArr = [1,2,3, demo];
-
-testArr[3]();
-
-testArr[5] = demo;
-
-testArr[5]();
+test();
