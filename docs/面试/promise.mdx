@@ -19,3 +19,12 @@ promise.then(() => {
 
 console.log(4);
 ```
+
+
+这道题血坑！🩸 就一句：**promise中 resolve() 之后的代码还会 继续执行！！**
+
+也怪自己平时写promise做封装大多都是   `return resolve(res)` 的方式
+
+谁会在resolve()之后继续写业务代码啊啊啊啊？？？！！！  说多了都是眼泪 💧😭
+
+正确顺序： 1 2 4 3
