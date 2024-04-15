@@ -1,34 +1,18 @@
----
-slug: duplicate removal.
-title: 数组去重
----
-
-
-### 写一个方法将下面 arr 中的数据去重，去重后的结果应为result所示结果
-
-
-```js
 const arr = [
     'null',
-     null,
-     null,
-     undefined,
-     {},
-     {name: 'xiaoyu'},
-     {name: 'xiaoyu'},
-     {title: 'xiaoyu'},
-     {name: undefined},
-     {}
+    null,
+    null,
+    undefined,
+    {},
+    {name: 'xiaoyu'},
+    {name: 'xiaoyu'},
+    {title: 'xiaoyu'},
+    {name: undefined},
+    {}
 ];
-const result = ['null', null, undefined, {}, {name: 'xiaoyu'}, {title: 'xiaoyu'}, {name: undefined}];
-```
 
 
-
-
-```js
-// 题解：
-/*工具函数*/
+// 工具函数
 function isEqual(o1, o2) {
     if ((typeof o1 === 'object' && o1 !== null) && (typeof o2 === 'object' && o2 !== null)) {
         let keys1 = Object.keys(o1);
@@ -50,7 +34,7 @@ function isEqual(o1, o2) {
     return o1 === o2;
 }
 
-/*主函数*/
+// 主函数
 function main(sourceArr) {
     let result = [];
     for (let i = 0; i < sourceArr.length; i++) {
@@ -64,20 +48,5 @@ function main(sourceArr) {
     }
     return result;
 }
-```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+console.log(main(arr));

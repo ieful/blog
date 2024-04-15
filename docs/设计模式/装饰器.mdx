@@ -1,0 +1,25 @@
+---
+slug: decorator
+title: 装饰器
+---
+
+### 透明缓存的装饰器
+
+
+
+```js
+function cachingDecorator(fun) {
+    let cache = new Map();
+    return function (x) {
+        if (cache.has(x)) {
+            return cache.get(x);
+        }
+
+        let result = fun(x);
+
+        cache.set(x, result);
+
+        return result;
+    }
+}
+```
