@@ -42,11 +42,11 @@ console.log('c2:' + c2.data.a);
 
 
 ```js
-// 题解：这道题没什么难道，只要知道 Vue2 中的 Object.defineProperty 加一点 细心 就能做对
+// 题解：这道题没什么难的，只要知道 Vue2 中的 Object.defineProperty 再加一点 细心 就能做对
 
 // 定义了一个全局的 option 对象
 var option = {
-    // 还专门把 data 设置为一个 对象，并且包在 option 中够不够 "心机" ？ 读到这儿我就知道这是有意为之！
+    // 还专门把 data 设置为一个 对象，并且包在 option 中够不够 "心机"  读到这儿我都能猜到它后面的坑长啥样了👓！
     data: {
         a: 1
     }
@@ -55,7 +55,8 @@ var option = {
 
 class Component {
     constructor(opt) {
-        this.data = opt.data; // 重点来了，在constructor 中直接把 opt.data 赋值给了 this.data, 而opt.data 是一个引用类型！！记住后面要考！
+        // 重点来了，在constructor 中直接把 opt.data 赋值给了 this.data, 而opt.data 是一个引用类型！！记住后面要考！
+        this.data = opt.data;
         Object.defineProperty(this.data, 'a', {
             get: function () {
                 console.log('get val'); // 普通的 getter 记录操作，返回值
@@ -75,9 +76,10 @@ var c1 = new Component(option);
 var c2 = new Component(option);
 // 所以这两句代码执行完后，c1 和 c2 都有自己的 data 但是其指向是同一块内存！
 
-
-c1.data.a = 3; // c1 开始操作自己的data了，赋值 3 ，打印： set val： 3
-c2.data.a = 5; // c2 开始操作自己的data了， 赋值 5， 打印：set val: 5  由于二者指向的data 其实是同一块内存，所以其实c2改写了 c1 赋的值
+// c1 开始操作自己的data了，赋值 3 ，打印： set val： 3
+c1.data.a = 3;
+// c2 开始操作自己的data了， 赋值 5， 打印：set val: 5  由于二者指向的data 其实是同一块内存，所以其实c2改写了 c1 赋的值
+c2.data.a = 5;
 
 
 console.log('c1:' + c1.data.a); // c1 读取data.a ,肯定是5啊，以为 你的 3 已经被 c2 给改成 5 了！ 打印：get val  c1: 5

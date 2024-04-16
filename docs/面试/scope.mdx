@@ -42,8 +42,10 @@ function test() {
     var a; // 把 var a 变量声明提升到函数最上面
     console.log(a); // 妥妥的 undefined 嘛！
     a = 100; // 给 a 赋值 100
-    console.log(this.a); // 打印this.a， 那么this 执行谁？ 那要看谁调用的test，我们看看：👀test() 谁调用的？ 全局调用的，所以this.a 是外层的 10
-    console.log(a); // 打印变量 a 先在当前函数作用域中查找变量 a 我们找一下 🔍能找到嘛，可以！ 有一个 100 所以 第三个是 100
+    // 打印this.a， 那么 this 指向谁？ 那要看谁调用的 test 我们来看看：👀test() 谁调用的？ 全局调用的，所以this.a 是外层的 10
+    console.log(this.a);
+    // 打印变量 a 先在当前函数作用域中查找变量 a 我们找一下 🔍能找到嘛，可以！ 有一个 100 所以 第三个是 100
+    console.log(a);
 }
 // 正确答案： undefined 10 100   (浏览器环境)
 ```
@@ -52,7 +54,7 @@ function test() {
 // 追问题解: 如果题目是这样的
 
 var a = 10; // 全局变量 a: 10
-// test中没有 var 所以没有变量提升，代码按序执行
+// test中没有 var 所以没有变量提升，代码按顺序执行
 function test() {
     // 打印变量 a ,按作用域链找，函数作用域中没有变量 a 向上查找，找到全局变量 a: 10 打印 10
     console.log(a);
