@@ -393,14 +393,13 @@ export default defineConfig({
 实现更好的封装和隐藏🫥,此时前台通过事件触发后台发起请求，再从后台接受返回的响应就需要一套良好的通信机制，在Chrome扩展
 中主要用两种通信的方式：
 
-1、chrome.runtime.sendMessage/chrome.tabs.sendMessage短链接的方式
-2、chrome.runtime.connect/chrome.tabs.connect长链接的方式
+1、chrome.runtime.sendMessage/chrome.tabs.sendMessage 短链接的方式
+
+2、chrome.runtime.connect/chrome.tabs.connect 长链接的方式
 
 短连接的话就是挤牙膏一样，我发送一下，你收到了再回复一下，如果对方不回复，你只能重新发，而长连接类似WebSocket会一直建立连接，双方可以随时互发消息。
 
-这里开始我使用的是短链接的方式，但是发现服务端SSE推送的数据流过来的时候，需要不断的触发 sendMessage 和 onMessage 经常会出现消息错乱，同一个消息
-
-内容重复了多次的bug，改成长链接的方式就好了👌。
+这里开始我使用的是短链接的方式，但是发现服务端SSE推送的数据流过来的时候，需要不断的触发 sendMessage 和 onMessage 经常会出现消息错乱，同一个消息内容重复多次的bug，改成长链接的方式就好了👌。
 
 ```js
 /*content.js向background.js 发起长链接*/
