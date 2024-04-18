@@ -1,0 +1,89 @@
+---
+slug: Proxy和Defineproperty
+title: Proxy和Defineproperty 的核心区别
+---
+
+import ecma from '/static/img/ecma.png';
+import ecma2 from '/static/img/ecma2.png';
+import defineownproperty from '/static/img/DefineOwnProperty.png';
+import functionpng from '/static/img/function.png';
+
+
+
+### **对象的基本操作**
+
+比如我们平时对一个对象做的操作：
+
+```js
+const obj = {};
+
+obj.name; // 读取对象的某一个属性
+obj.name = 'xiaoyu'; // 给对象某个属性重新赋值
+delete obj.name; // 删除某个属性
+// 遍历对象上的属性
+for (const key in obj) {
+    if (Object.hasOwnProperty.call(obj, key)) {
+        // ...
+    }
+}
+// ...
+```
+以上这些对象的操作，都是JS语法层面上的，为的是让开发者更加方便地编写代码，
+而这些操作在实际运行的时候都会被转换为运行某一个函数，比如读取某个属性它实际
+在内部是运行[[GET]]函数，给某个属性赋值，实际内部是运行一个函数[[SET]],
+删除一个属性内部运行的是[[DELETE]]函数,遍历对象的属性实际执行的是[[OwnPropetyKeys]]...
+这些内部运行的方法就是对象的 **基本操作** 我们对对象做的所有操作最终都会被转换为
+这些**基本操作**。
+
+### **对象共有哪些基本操作？**
+
+我们直接看 ECMA-262 👇
+
+
+<img src={ecma} alt="ecma" />
+
+<img src={ecma2} alt="ecma" />
+
+在ECMA-262规定的对象基本操作中我们看到有一个 [[DefineOwnProperty]] 的基本操作
+
+<img src={defineownproperty} alt="defineownproperty" />
+
+其实这个基本操作对应的就是我们的 Object.definePropterty()方法，当我们调用 Object.definePropterty() 的时候
+它内部就会被转换成 [[DefineOwnProperty]] 的基本操作。
+
+
+
+### 所以Proxy和Defineproperty 的核心区别到底是什么？
+
+
+了解了以上的知识，我们回过头再来看 Proxy和Defineproperty 的根本区别在于哪里呢？
+
+**Proxy 拦截的是所有的 *基本* 操作**
+
+**而 Defineproperty 啥也不拦截，它自己本身只是众多基本操作中的一个**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
