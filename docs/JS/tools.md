@@ -5,7 +5,7 @@ title: 一些工具函数
 
 
 ```javascript
-// 1、眠函数
+// 1、睡眠函数
 function sleep(time) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
