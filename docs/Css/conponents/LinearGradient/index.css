@@ -1,0 +1,14 @@
+.LinearGradientDemo {
+    width: 700px;
+    font-size: 18px;
+    color: #606c71;
+    line-height: 1.5;
+}
+
+.LinearGradientDemo::after {
+    content: '';
+    display: block;
+    background: linear-gradient(to right, #00f2fe, #fee140);
+    width: 100%;
+    height: 2px;
+}
