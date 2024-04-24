@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-import styles from './index.module.css'
+// import './index.module.css'
 
 
 const CssVariable = () => {
@@ -7,11 +7,11 @@ const CssVariable = () => {
 
     const w = containerRef.current?.clientWidth;
 
-    containerRef.current?.style.setProperty('--w', w + 'px');
+    containerRef.current?.style.setProperty('--myw', w + 'px');
 
     return (
-        <div className={styles.container} ref={containerRef}>
-            <div className={styles.ball}></div>
+        <div className='container' ref={containerRef}>
+            <div className='ball'></div>
         </div>
     )
 }

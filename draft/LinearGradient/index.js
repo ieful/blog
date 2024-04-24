@@ -1,10 +1,9 @@
-import React from 'react';
-import './index.css';
+import React from 'react'
+// import './index.module.css';
 
-
-const TextErase = () => {
+const LinearGradientDemo = () => {
     return (
-        <div className='container'>
+        <div className='container1'>
             <p>
                 Rough.js is a small (9kB gzipped) graphics library that lets you draw in a sketchy, hand-drawn-like,
                 style. The library defines primitives to draw lines, curves, arcs, polygons, circles, and ellipses. It
@@ -12,8 +11,8 @@ const TextErase = () => {
 
                 Rough.js works with both Canvas and SVG.
             </p>
-            <p className='eraser'>
-                <span className='text'>
+            <p className='eraser1'>
+                <span className='text1'>
                     Rough.js is a small (9kB gzipped) graphics library that lets you draw in a sketchy, hand-drawn-like,
                 style. The library defines primitives to draw lines, curves, arcs, polygons, circles, and ellipses. It
                 also supports drawing SVG paths.
@@ -25,4 +24,4 @@ const TextErase = () => {
     )
 }
 
-export default TextErase;
+export default LinearGradientDemo;
