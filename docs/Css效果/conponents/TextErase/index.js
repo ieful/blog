@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './index.css';
 
 
 const TextErase = () => {
+
     return (
         <div className='my-container2'>
             <p>

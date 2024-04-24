@@ -1,4 +1,3 @@
-
 .my-container2 {
     margin: 0;
     padding: 0;
@@ -15,11 +14,13 @@
     position: absolute;
     inset: 0;
 }
+
 @property --my-eraserp {
-    syntax: '<percentage>';
-    initial-value: 0%;
+    syntax: "<percentage>";
     inherits: false;
+    initial-value: 0%;
 }
+
 
 .my-container2 .my-eraser2 .my-text2 {
     --my-eraserp: 0%;
