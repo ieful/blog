@@ -1,0 +1,35 @@
+
+.my-container2 {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /*width: 80%;*/
+    /*margin: 1em auto;*/
+    position: relative;
+    /*left: 16px;*/
+    line-height: 2;
+    text-indent: 2em;
+}
+
+.my-container2 .my-eraser2 {
+    position: absolute;
+    inset: 0;
+}
+.my-container2 .my-eraser2 .my-text2 {
+    --p: 0%;
+    background: linear-gradient(to right, #0000 var(--p), #fee140 var(--p));
+    color: transparent;
+    animation: my-eraser2 5s linear forwards;
+}
+
+@property --p {
+  syntax: '<percentage>';
+    initial-value: 0%;
+    inherits: false;
+}
+
+@keyframes my-eraser2 {
+    to {
+        --p: 100%
+    }
+}

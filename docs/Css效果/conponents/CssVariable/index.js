@@ -1,5 +1,5 @@
 import React, {useRef} from 'react';
-// import './index.module.css'
+import './index.css'
 
 
 const CssVariable = () => {
@@ -10,8 +10,8 @@ const CssVariable = () => {
     containerRef.current?.style.setProperty('--myw', w + 'px');
 
     return (
-        <div className='container' ref={containerRef}>
-            <div className='ball'></div>
+        <div className='my-container' ref={containerRef}>
+            <div className='my-ball'></div>
         </div>
     )
 }
