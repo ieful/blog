@@ -3,12 +3,24 @@ import './index.css';
 
 const LinearGradientDemo = () => {
     return (
-        <p className='LinearGradientDemo'>
-            <strong>Rough.js</strong> is a small (&lt;9kB gzipped) graphics library that lets you draw in
-            a <em>sketchy</em>, <em>hand-drawn-like</em>, style.
-            The library defines primitives to draw lines, curves, arcs, polygons, circles, and ellipses. It also
-            supports drawing <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths">SVG paths</a>.
-        </p>
+        <div className='container1'>
+            <p>
+                Rough.js is a small (9kB gzipped) graphics library that lets you draw in a sketchy, hand-drawn-like,
+                style. The library defines primitives to draw lines, curves, arcs, polygons, circles, and ellipses. It
+                also supports drawing SVG paths.
+
+                Rough.js works with both Canvas and SVG.
+            </p>
+            <p className='eraser1'>
+                <span className='text1'>
+                    Rough.js is a small (9kB gzipped) graphics library that lets you draw in a sketchy, hand-drawn-like,
+                style. The library defines primitives to draw lines, curves, arcs, polygons, circles, and ellipses. It
+                also supports drawing SVG paths.
+
+                Rough.js works with both Canvas and SVG.
+                </span>
+            </p>
+        </div>
     )
 }
 

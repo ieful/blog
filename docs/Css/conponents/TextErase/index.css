@@ -11,11 +11,11 @@
     text-indent: 2em;
 }
 
-.eraser {
+.container .eraser {
     position: absolute;
     inset: 0;
 }
-.text {
+.container .eraser .text {
     --p: 0%;
     background: linear-gradient(to right, #0000 var(--p), #fee140 var(--p));
     color: transparent;

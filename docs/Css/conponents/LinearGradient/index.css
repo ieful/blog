@@ -1,14 +1,23 @@
-.LinearGradientDemo {
-    width: 700px;
-    font-size: 18px;
-    color: #606c71;
-    line-height: 1.5;
+
+.container1 {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.LinearGradientDemo::after {
-    content: '';
-    display: block;
-    background: linear-gradient(to right, #00f2fe, #fee140);
-    width: 100%;
-    height: 2px;
+.container1 .eraser1 {
+    position: absolute;
+    inset: 0;
+}
+
+.container1 .eraser1 .text1 {
+    background: linear-gradient(to right, #fa709a, #fee140) no-repeat right bottom;
+    background-size: 0px 2px;
+    transition: background-size 0.5s;
+}
+
+.container1 .eraser1 .text1:hover {
+    background-position: left bottom;
+    background-size: 100% 2px;
 }
