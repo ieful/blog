@@ -1,13 +1,16 @@
-import React, {useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import './index.css'
 
 
 const CssVariable = () => {
     const containerRef = useRef(null);
 
-    const w = containerRef.current?.clientWidth;
+    useEffect(() => {
+        const w = containerRef.current?.clientWidth;
 
-    containerRef.current?.style.setProperty('--myw', w + 'px');
+        containerRef.current?.style.setProperty('--myw', w + 'px');
+
+    }, [])
 
     return (
         <div className='my-container' ref={containerRef}>
