@@ -15,21 +15,21 @@
     position: absolute;
     inset: 0;
 }
-.my-container2 .my-eraser2 .my-text2 {
-    --p: 0%;
-    background: linear-gradient(to right, #0000 var(--p), #fee140 var(--p));
-    color: transparent;
-    animation: my-eraser2 5s linear forwards;
-}
-
-@property --p {
-  syntax: '<percentage>';
+@property --my-eraserp {
+    syntax: '<percentage>';
     initial-value: 0%;
     inherits: false;
 }
 
+.my-container2 .my-eraser2 .my-text2 {
+    --my-eraserp: 0%;
+    background: linear-gradient(to right, #0000 var(--my-eraserp), #fee140 calc(var(--my-eraserp) + 100px));
+    color: transparent;
+    animation: my-eraser2 5s linear forwards;
+}
+
 @keyframes my-eraser2 {
     to {
-        --p: 100%
+        --my-eraserp: 100%
     }
 }
