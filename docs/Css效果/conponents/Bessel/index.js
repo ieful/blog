@@ -10,6 +10,7 @@ const Bessel = () => {
             <div className='redball'>
                 <div className='inner'></div>
             </div>
+            <span className='Shoppingcart'>🛒</span>
         </div>
     )
 }

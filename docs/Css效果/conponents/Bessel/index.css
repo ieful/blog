@@ -1,10 +1,17 @@
 
 .playground {
+    position: relative;
     width: 200px;
     height: 500px;
     border: 2px dashed #a1c4fd;
 }
 
+.playground .Shoppingcart {
+    font-size: 25px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
 
 
 .playground .redball {
