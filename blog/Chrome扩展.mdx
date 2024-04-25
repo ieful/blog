@@ -9,6 +9,13 @@ import Write from "./Write";
 import Gpt from "./GPT";
 import pdf from '/static/video/pdf.mp4';
 
+import pdf1 from '/static/img/pdf1.png';
+import pdf2 from '/static/img/pdf2.png';
+import pdf3 from '/static/img/pdf3.png';
+import pdf4 from '/static/img/pdf4.png';
+import pdf5 from '/static/img/pdf5.png';
+
+
 ### 扩展一： HAR Debugger 一个可以帮助开发者快速定位客户网络或者产品问题的工具插件
 
 产品内部自测通过，交付用户后在用户的电脑💻上奔溃了，客户投诉产品垃圾怎么办？
@@ -475,5 +482,19 @@ chrome.runtime.onConnect.addListener(port => {
 })
 ```
 
+### PDF 划词实现
+
+PDF中划词能力的实现是借助了客户端封装的方法，通过在扩展中监听来自客户端的内容选中事件，并解析事件提供的参数来实现的
+
+
+<img src={pdf1} alt="pdf1"/>
+
+<img src={pdf2} alt="pdf2"/>
+
+<img src={pdf3} alt="pdf3"/>
+
+<img src={pdf5} alt="pdf5"/>
+
+<img src={pdf4} alt="pdf4"/>
 
 
