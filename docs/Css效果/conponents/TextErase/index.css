@@ -23,10 +23,10 @@
 
 
 .my-container2 .my-eraser2 .my-text2 {
-    --my-eraserp: 0%;
+    /*--my-eraserp: 0%;*/
     background: linear-gradient(to left, #0000 var(--my-eraserp), #fee140 calc(var(--my-eraserp) + 100px));
     color: transparent;
-    animation: my-eraser2 1s linear forwards;
+    animation: my-eraser2 5s linear forwards;
 }
 
 @keyframes my-eraser2 {
