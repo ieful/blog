@@ -1,0 +1,254 @@
+---
+title: OpenClaw 多智能体团队搭建指南
+date: 2026-04-02
+authors: Allen
+tags: [AI, OpenClaw, Agent, 多智能体]
+---
+
+## 为什么要搭建多智能体团队？
+
+很多人第一反应是：把所有能力塞到一个 Agent 里不就行了？
+
+实践中你很快会遇到三个问题：
+
+**上下文污染**：一个 Agent 的上下文窗口是有限的。把生图模板、投资分析框架、写作风格指南、代码操作说明全塞进同一个上下文，Agent 的注意力会严重分散——让它写文章，它可能不自觉地用上投资分析的术语。
+
+**技能冲突**：不同场景需要的工具和权限完全不同。开发助手需要 ACP 协议调度 Claude Code，这个权限对写作助手来说完全多余且有安全风险。把所有权限开放给一个 Agent，违反最小权限原则。
+
+**人设冲突**：投资助手应该严谨、数据驱动；写作助手应该有温度、善于表达；社区助手则可以有趣、善于社交。这些截然不同的"性格"很难在一个 Agent 身上和谐共存。
+
+结论：**专精胜于全能，隔离优于共享**。就像一个高效团队不是由一个全能的人组成的，而是由若干专家组成的。
+
+<!-- truncate -->
+
+## 一个 Agent 的核心要素
+
+在开始搭建前，先理解一个生产级 Agent 由哪些要素构成：
+
+- **模型**：LLM 是 Agent 的认知引擎，负责语言理解、推理规划和生成输出，决定了 Agent 的"智力天花板"。
+- **记忆**：让 Agent 从"无状态的函数"变成"可连续工作的助手"。分为短期记忆（会话上下文）和长期记忆（跨会话知识持久化）。
+- **人设**：定义 Agent 的角色、边界、行为准则和沟通风格。同一个问题，"严谨技术顾问"和"友善助手"给你的体验完全不同。
+- **工具**：Agent 可调用的外部能力，如代码执行、API 调用、浏览器操控、文件读写。
+- **规划和执行**：将复杂任务拆解为可执行步骤序列的能力。
+- **运行环境**：安全、隔离的执行环境。
+
+## OpenClaw 中 Agent 的具体实现
+
+### 模型
+
+每个 Agent 可以绑定不同的模型。写作 Agent 可以配擅长聊天的模型（如 `openai/gpt-5-4`），开发 Agent 配擅长编码的模型（如 `anthropic/claude-opus-4-6`）。
+
+### 记忆
+
+每个 Agent 拥有独立的三层记忆：短期记忆（当前会话上下文）、中期记忆（`memory/YYYY-MM-DD.md` 日记文件）、长期记忆（`MEMORY.md`，跨会话沉淀的用户偏好和关键决策）。
+
+### 人设文件
+
+```
+~/.openclaw/workspace-xxx/
+├── SOUL.md          # Agent 的灵魂：核心身份和行为准则
+├── IDENTITY.md      # Agent 的身份：名字、角色描述等
+├── AGENTS.md        # Agent 的工作流程和操作规范
+├── USER.md          # 用户信息：你是谁、你的偏好
+├── MEMORY.md        # 长期记忆
+├── memory/          # 中期记忆
+│   └── YYYY-MM-DD.md
+└── skills/          # 技能目录
+    └── custom-skill/
+        └── SKILL.md
+```
+
+每个 Agent 的 Workspace 完全独立，互不干扰。
+
+## 搭建多智能体团队的三个关键问题
+
+### 1. 工作环境隔离：谁在哪工作？
+
+为每个 Agent 分配独立的 Workspace，使用向导命令快速创建：
+
+```bash
+openclaw agents add coding
+openclaw agents add social
+openclaw agents add research
+```
+
+每个命令会自动创建独立的 workspace（如 `.openclaw/workspace-social`），并初始化 `SOUL.md`、`AGENTS.md`、`USER.md` 等核心文件。
+
+### 2. 路由规则：消息发给谁？
+
+在 OpenClaw 配置中，为每个 Bot 创建一个 account，填入对应的 `AppId` 和 `AppSecret`：
+
+```json
+{
+  "channels": {
+    "feishu": {
+      "enabled": true,
+      "domain": "feishu",
+      "mediaMaxMb": 30,
+      "accounts": {
+        "img": {
+          "appId": "你的飞书 Bot appId",
+          "appSecret": "你的飞书 Bot appSecret",
+          "botName": "生图助手"
+        }
+      },
+      "dmPolicy": "pairing"
+    }
+  }
+}
+```
+
+然后为每个 Agent 和 channel account 配置绑定关系：
+
+```json
+{
+  "bindings": [
+    {
+      "agentId": "img",
+      "match": {
+        "channel": "feishu",
+        "accountId": "img"
+      }
+    }
+  ]
+}
+```
+
+这样，发给"生图助手"飞书 Bot 的消息，就会自动路由到 `img` 这个 Agent 处理。
+
+### 3. 通信机制：Agent 之间怎么协作？
+
+当一个 Agent 需要调用另一个 Agent 时，OpenClaw 使用 `sessions_spawn` 发起调用。这个调用是**非阻塞**的，发起后当前 Agent 可以继续做自己的事情。
+
+被调用的 Agent 完成任务后，通过 Announce 把结果"广播"回去。出于安全考虑，需要明确声明每个 Agent 允许调用哪些其他 Agent：
+
+```json
+{
+  "subagents": {
+    "allowAgents": ["img", "writer", "news"]
+  }
+}
+```
+
+## 一份最小的多 Agent 配置示例
+
+```json
+{
+  "agents": {
+    "list": [
+      {
+        "id": "main",
+        "workspace": "/Users/user/.openclaw/workspace",
+        "identity": { "name": "智能总管" },
+        "subagents": {
+          "allowAgents": ["img"]
+        }
+      },
+      {
+        "id": "img",
+        "workspace": "/Users/user/.openclaw/workspace-img",
+        "identity": { "name": "生图助手" }
+      }
+    ]
+  },
+  "bindings": [
+    {
+      "agentId": "img",
+      "match": {
+        "channel": "feishu",
+        "accountId": "img"
+      }
+    }
+  ],
+  "channels": {
+    "feishu": {
+      "enabled": true,
+      "domain": "feishu",
+      "mediaMaxMb": 30,
+      "accounts": {
+        "default": {
+          "appId": "xxx",
+          "appSecret": "xxx",
+          "botName": "智能总管"
+        },
+        "img": {
+          "appId": "xxx",
+          "appSecret": "xxx",
+          "botName": "生图助手"
+        }
+      },
+      "dmPolicy": "pairing"
+    }
+  }
+}
+```
+
+## 实战：多智能体协作案例
+
+给智能总管发送一条指令：
+
+> 首先协调资讯助手获取今天的 AI 日报内容，然后调用生图助手为日报生成 3 张配图，最后调用写作助手将内容扩写成一篇深度飞书文档，并将图片插入合适位置。
+
+主管按照依赖关系分三个阶段执行：
+
+1. **阶段一**：派资讯助手获取日报内容，生成配图建议
+2. **阶段二**：派生图助手根据日报主题生成三张图片
+3. **阶段三**：派写作助手进行更多调研，将资讯扩写成深度文章，将图片插入合适位置，输出飞书文档
+
+三个 Agent 各司其职：资讯助手负责数据获取，生图助手负责视觉创作，写作助手负责内容生产和最终交付——而主管只负责调度和串联。
+
+**你不需要告诉每个 Agent 怎么做，你只需要告诉主管你想要什么结果。**
+
+## 各类 Agent 的核心配置思路
+
+### 生图 Agent
+
+- **Skills**：配置生图模型技能（如 nanobanana、Seedream）
+- **提示词模板技能**：将常用风格的完整提示词存储在 `references/templates.md` 中，让 Agent 生图时自动检索匹配
+- **长期记忆**：记住"生图时先查模板、再拼接、最后调用生图工具"的工作流程
+
+### 资讯 Agent
+
+- **邮箱技能**：安装支持 IMAP 协议的技能（如 `imap-smtp-email`），订阅信息源邮件
+- **分析脚本**：配置本地处理脚本，将邮件内容转化为结构化日报
+- **定时任务**：设置 CronJob，每天自动触发完整流程
+
+### 投资分析 Agent
+
+- **数据获取技能**：`a-stock-analysis`（免费）或 `tushare-data`（专业）
+- **综合分析技能**：包含投研方法论（`investment_framework.md`）和报告模板（`investment_report_template.md`）
+- **人设**：`SOUL.md` 中定义严谨、数据驱动、风险优先的行为准则
+
+### 开发 Agent
+
+- **GitHub Skill**：执行 `gh auth login` 完成认证后即可使用
+- **ACP 协议**：安装 `acpx` 插件，让 OpenClaw 能调度 Claude Code 等专业编程 Agent
+
+```bash
+openclaw plugins install acpx
+openclaw config set plugins.entries.acpx.enabled true
+openclaw config set plugins.entries.acpx.config.permissionMode approve-all
+```
+
+### 写作 Agent
+
+- **联网搜索**：Tavily（专为 AI Agent 优化，结构化结果，噪音少）
+- **飞书文档技能**：直接创建、写入飞书文档
+- **去 AI 味技能**：将"值得注意的是"、"综上所述"等 AI 特征表达替换为更自然的写法
+- **工作流程**：需求理解 → 初步调研 → 大纲拟定 → 逐节撰写 → 联网补充 → 自查润色 → 去 AI 味 → 格式交付
+
+## 小结
+
+搭建多智能体团队的核心原则：
+
+1. **按职能拆分**：不要追求全能 Agent，每个 Agent 专注一个领域
+2. **独立 Workspace**：每个 Agent 有自己的工作区、记忆和技能
+3. **明确路由**：一个飞书 Bot 对应一个 Agent，入口清晰
+4. **权限最小化**：每个 Agent 只开放完成任务所需的最少工具和权限
+5. **渐进式搭建**：从一个 Agent 开始，跑通后再扩展，每搭建一个经验就多一分
+
+多智能体团队不是一次性设计出来的，而是在实际使用中一个一个迭代出来的。从最高频的需求出发，先让一个 Agent 跑通，再逐步扩展你的 AI 团队。
+
+---
+
+> 来自晓宇的龙虾助手小笼包🦞
