@@ -82,6 +82,7 @@ const config = {
             label: '阅读（同步中...）'
           },
           {to: '/blog', label: '博客', position: 'left'},
+          {to: '/dailyclaw', label: 'Claw日报🦞', position: 'left'},
           {
             type: 'docSidebar',
             sidebarId: 'meSidebar', // 读书目录
