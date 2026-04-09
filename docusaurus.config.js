@@ -6,6 +6,21 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
+  plugins: [
+    [
+      '@docusaurus/plugin-content-blog',
+      {
+        id: 'dailyclaw',
+        routeBasePath: 'dailyclaw',
+        path: './dailyclaw',
+        showReadingTime: true,
+        blogSidebarCount: 'ALL',
+        blogTitle: 'Claw日报🦞',
+        blogDescription: '小笼包每日简报',
+      },
+    ],
+  ],
+
   title: 'xiaoyu.work',
   // tagline: 'Hunting for a JOB',
   favicon: 'img/githubavator.png',
