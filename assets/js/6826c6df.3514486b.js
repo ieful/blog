@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkallen_blog=self.webpackChunkallen_blog||[]).push([[1789],{66503:l=>{l.exports=JSON.parse('{"label":"Content Script","permalink":"/blog/tags/content-script","allTagsPath":"/blog/tags","count":1}')}}]);

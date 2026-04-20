@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkallen_blog=self.webpackChunkallen_blog||[]).push([[7347],{28967:l=>{l.exports=JSON.parse('{"label":"Chrome\u6269\u5c55","permalink":"/blog/tags/chrome\u6269\u5c55","allTagsPath":"/blog/tags","count":1}')}}]);

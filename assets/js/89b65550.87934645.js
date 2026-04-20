@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkallen_blog=self.webpackChunkallen_blog||[]).push([[6762],{33667:l=>{l.exports=JSON.parse('{"label":"ESModule","permalink":"/blog/tags/es-module","allTagsPath":"/blog/tags","count":1}')}}]);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkallen_blog=self.webpackChunkallen_blog||[]).push([[863],{24749:l=>{l.exports=JSON.parse('{"label":"UMD","permalink":"/blog/tags/umd","allTagsPath":"/blog/tags","count":1}')}}]);

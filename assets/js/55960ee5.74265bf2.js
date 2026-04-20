@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkallen_blog=self.webpackChunkallen_blog||[]).push([[4121],{88070:e=>{e.exports=JSON.parse('[{"label":"Music","permalink":"/docs/tags/music","count":176}]')}}]);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkallen_blog=self.webpackChunkallen_blog||[]).push([[5151],{12560:l=>{l.exports=JSON.parse('{"label":"IIFE","permalink":"/blog/tags/iife","allTagsPath":"/blog/tags","count":1}')}}]);

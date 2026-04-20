@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkallen_blog=self.webpackChunkallen_blog||[]).push([[189],{82752:l=>{l.exports=JSON.parse('{"label":"\u5927\u6a21\u578b","permalink":"/dailyclaw/tags/\u5927\u6a21\u578b","allTagsPath":"/dailyclaw/tags","count":2}')}}]);

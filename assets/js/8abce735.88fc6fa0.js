@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkallen_blog=self.webpackChunkallen_blog||[]).push([[9652],{74342:l=>{l.exports=JSON.parse('{"label":"Manifest V3","permalink":"/blog/tags/manifest-v-3","allTagsPath":"/blog/tags","count":1}')}}]);

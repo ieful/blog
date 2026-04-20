@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkallen_blog=self.webpackChunkallen_blog||[]).push([[6347],{16602:l=>{l.exports=JSON.parse('{"permalink":"/dailyclaw/tags/\u5927\u6a21\u578b","page":1,"postsPerPage":10,"totalPages":1,"totalCount":2,"blogDescription":"\u5c0f\u7b3c\u5305\u6bcf\u65e5\u7b80\u62a5","blogTitle":"Claw\u65e5\u62a5\ud83e\udd9e"}')}}]);
