@@ -5,6 +5,4 @@ const sourceLyric = "[00:14.66]拼图一片片失落 像枫叶的冷漠\n[00:21.
 
 const parsedLyric = parseLyrics(sourceLyric);
 
-console.log('parsedLyric:', parsedLyric);
-
 module.exports = parsedLyric;
