@@ -9,8 +9,9 @@ let buffer;
 const WaveBg = (props) => {
     const audioRef = useRef(null);
     const lyricRef = useRef(null);
-    const canvasWrapperRef = useRef(null);
     const canvasRef = useRef(null);
+    const animationFrameRef = useRef(null);
+    const audioContextRef = useRef(null);
     const isInitRef = useRef(false);
     const [audioStatus, setAudioStatus] = useState('pause');
     const [currentLyric, setCurrentLyric] = useState('');
@@ -19,8 +20,15 @@ const WaveBg = (props) => {
 
     useEffect(() => {
         if (canvasRef.current) {
-            draw(new Array(100).fill(0), 255);
+            resizeCanvas();
+            draw(new Array(128).fill(0), 255);
         }
+
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            stopVisualizer();
+        };
     }, [])
 
     // useEffect(() => {
@@ -37,10 +45,16 @@ const WaveBg = (props) => {
     useEffect(() => {
         if (audioStatus === 'play') {
             Ev();
+            startVisualizer();
         } else {
             Ve();
+            stopVisualizer();
+            draw(new Array(128).fill(0), 255);
         }
-        return () => Ve();
+        return () => {
+            Ve();
+            stopVisualizer();
+        };
     }, [audioStatus])
 
     useEffect(() => {
@@ -68,35 +82,87 @@ const WaveBg = (props) => {
                 break;
             }
         }
-        update();
+    }
+
+    function handleResize() {
+        resizeCanvas();
+        draw(new Array(128).fill(0), 255);
+    }
+
+    function resizeCanvas() {
+        if (!canvasRef.current) {
+            return;
+        }
+
+        const canvas = canvasRef.current;
+        const rect = canvas.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        const width = Math.max(Math.floor(rect.width * ratio), 1);
+        const height = Math.max(Math.floor(rect.height * ratio), 1);
+
+        if (canvas.width !== width || canvas.height !== height) {
+            canvas.width = width;
+            canvas.height = height;
+        }
     }
 
     function draw(datas, maxValue) {
         if (!canvasRef.current) {
             return;
         }
-        const r = 4 + 20 * devicePixelRatio;
-        const center = canvasRef.current.width / 2;
-        canvasRef.current.getContext('2d').clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
-        const hslStep = 360 / (datas.length - 1);
-        const maxLen = canvasRef.current.width / 2 - r;
-        const minLen = 2 * devicePixelRatio;
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+        const ratio = window.devicePixelRatio || 1;
+        const centerY = height / 2;
+        const bandHeight = height * 0.78;
+        const barGap = 2 * ratio;
+        const barWidth = Math.max(width / datas.length - barGap, 2 * ratio);
+
+        ctx.clearRect(0, 0, width, height);
+
+        const bgGradient = ctx.createLinearGradient(0, 0, 0, height);
+        bgGradient.addColorStop(0, 'rgba(37, 194, 160, 0)');
+        bgGradient.addColorStop(0.5, 'rgba(37, 194, 160, 0.12)');
+        bgGradient.addColorStop(1, 'rgba(37, 194, 160, 0)');
+        ctx.fillStyle = bgGradient;
+        ctx.fillRect(0, 0, width, height);
+
+        const lineGradient = ctx.createLinearGradient(0, 0, width, 0);
+        lineGradient.addColorStop(0, '#25c2a0');
+        lineGradient.addColorStop(0.5, '#7c3aed');
+        lineGradient.addColorStop(1, '#f97316');
+
+        ctx.fillStyle = lineGradient;
+        ctx.shadowColor = 'rgba(37, 194, 160, 0.4)';
+        ctx.shadowBlur = 10 * ratio;
+
         for (let i = 0; i < datas.length; i++) {
-            canvasRef.current.getContext('2d').beginPath();
-            const len = Math.max((datas[i] / maxValue) * maxLen, minLen);
-            const rotate = hslStep * i;
-            canvasRef.current.getContext('2d').strokeStyle = `hsl(${rotate}deg, 65%, 65%)`;
-            canvasRef.current.getContext('2d').lineWidth = minLen;
-            const rad = (rotate * Math.PI) / 180;
-            const beginX = center + Math.cos(rad) * r;
-            const beginY = center + Math.sin(rad) * r;
-            const endX = center + Math.cos(rad) * (r + len);
-            const endY = center + Math.sin(rad) * (r + len);
-            canvasRef.current.getContext('2d').moveTo(beginX, beginY);
-            canvasRef.current.getContext('2d').lineTo(endX, endY);
-            canvasRef.current.getContext('2d').stroke();
+            const normalized = Math.min(datas[i] / maxValue, 1);
+            const barHeight = Math.max(normalized * bandHeight, 2 * ratio);
+            const x = i * (barWidth + barGap);
+            const y = centerY - barHeight / 2;
+
+            ctx.beginPath();
+            roundRect(ctx, x, y, barWidth, barHeight, barWidth / 2);
+            ctx.fill();
         }
+    }
+
+    function roundRect(ctx, x, y, width, height, radius) {
+        const safeRadius = Math.min(radius, width / 2, height / 2);
+
+        ctx.moveTo(x + safeRadius, y);
+        ctx.lineTo(x + width - safeRadius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + safeRadius);
+        ctx.lineTo(x + width, y + height - safeRadius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - safeRadius, y + height);
+        ctx.lineTo(x + safeRadius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - safeRadius);
+        ctx.lineTo(x, y + safeRadius);
+        ctx.quadraticCurveTo(x, y, x + safeRadius, y);
     }
 
     function xv(t) {
@@ -154,32 +220,48 @@ const WaveBg = (props) => {
     }
 
 
-    function update() {
-        requestAnimationFrame(update);
-        if(!isInitRef.current) {
+    function startVisualizer() {
+        if (animationFrameRef.current) {
             return;
         }
-        analyser.getByteFrequencyData(buffer);
-        const offset = Math.floor((buffer.length * 2) / 3);
-        const datas = new Array(offset * 2);
-        for (let i = 0; i < offset; i++) {
-            datas[i] = datas[datas.length - i - 1] = buffer[i];
+
+        update();
+    }
+
+    function stopVisualizer() {
+        if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+            animationFrameRef.current = null;
         }
+    }
+
+    function update() {
+        if(!isInitRef.current) {
+            animationFrameRef.current = null;
+            return;
+        }
+
+        analyser.getByteFrequencyData(buffer);
+        const offset = Math.floor(buffer.length * 0.82);
+        const datas = Array.from(buffer.slice(0, offset));
+
         draw(datas, 255);
+        animationFrameRef.current = requestAnimationFrame(update);
     }
 
     function handleAudioPause() {
         setAudioStatus('pause');
-        draw(new Array(100).fill(0), 255);
     }
 
     function handleAudioPlay() {
         setAudioStatus('play');
         if (isInitRef.current) {
+            audioContextRef.current?.resume?.();
             return;
         }
         // 创建音频上下文
-        const audioCtx = new AudioContext();
+        const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContextCtor();
         const source = audioCtx.createMediaElementSource(audioRef.current);
 
         // 音频数据分析器
@@ -189,49 +271,8 @@ const WaveBg = (props) => {
 
         source.connect(analyser);
         analyser.connect(audioCtx.destination);
+        audioContextRef.current = audioCtx;
         isInitRef.current = true;
-    }
-
-    // 拖拽限位
-    let x = 0;
-    let y = 0;
-    const handleMouseDown = (e) => {
-        e.stopPropagation();
-        x = e.clientX;
-        y = e.clientY;
-        document.addEventListener('mousemove', mouseMoveHandler);
-        document.addEventListener('mouseup', mouseUpHandler);
-    }
-    const mouseMoveHandler = (e) => {
-        const clientWidth = document.documentElement.clientWidth || document.body.clientWidth;
-        const clientHeight = document.documentElement.clientHeight || document.body.clientHeight;
-        const dx = e.clientX - x;
-        const dy = e.clientY - y;
-
-        // 限位，边缘不超出屏幕
-        if (canvasWrapperRef.current) {
-            if (canvasWrapperRef.current.offsetLeft + dx < 0) {
-                canvasWrapperRef.current.style.left = '0px'; // 左侧限位
-            } else if (canvasWrapperRef.current.offsetLeft + dx > clientWidth) {
-                canvasWrapperRef.current.style.left = `${clientWidth}px`; // 右侧限位
-            } else {
-                canvasWrapperRef.current.style.left = `${canvasWrapperRef.current.offsetLeft + dx}px`; // 左右移动范围
-            }
-            if (canvasWrapperRef.current.offsetTop < 0) {
-                canvasWrapperRef.current.style.top = '0px'; // 顶部限位
-            } else if (canvasWrapperRef.current.offsetTop + dy > clientHeight - canvasWrapperRef.current.offsetHeight) {
-                canvasWrapperRef.current.style.top = clientHeight - canvasWrapperRef.current.offsetHeight > 0 ? `${clientHeight - canvasWrapperRef.current.offsetHeight}px` : '0px'; // 底部限位
-            } else {
-                canvasWrapperRef.current.style.top = `${canvasWrapperRef.current.offsetTop + dy}px`; // 上下活动范围
-            }
-        }
-        x = e.clientX;
-        y = e.clientY;
-    }
-
-    const mouseUpHandler = (e) => {
-        document.removeEventListener('mousemove', mouseMoveHandler);
-        document.removeEventListener('mouseup', mouseUpHandler);
     }
 
 
@@ -254,8 +295,8 @@ const WaveBg = (props) => {
                     </div>
                 )
             }
-            <div className="canvasWrapper" ref={canvasWrapperRef} onMouseDown={handleMouseDown}>
-                <canvas ref={canvasRef} id='canvas' width={600} height={500}></canvas>
+            <div className="audioWaveBand">
+                <canvas ref={canvasRef} id='canvas' className="audioWaveCanvas"></canvas>
             </div>
         </div>
     )

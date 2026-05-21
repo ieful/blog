@@ -201,6 +201,42 @@ npm run serve
 
 先构建，再预览 `build/` 目录，能更接近线上效果。
 
+## 站点统计
+
+项目已预留 Google Analytics 4 统计配置。统计 ID 不写死在仓库中，而是通过环境变量 `GTAG_TRACKING_ID` 注入。
+
+### 如何启用
+
+1. 登录 Google Analytics，创建一个 GA4 媒体资源。
+2. 在“数据流”中创建 Web 数据流，填入站点域名。
+3. 复制衡量 ID，格式通常类似 `G-XXXXXXXXXX`。
+4. 构建或部署时设置环境变量：
+
+```bash
+GTAG_TRACKING_ID=G-XXXXXXXXXX npm run build
+```
+
+如果是部署平台，可以在平台的环境变量配置中添加：
+
+```text
+GTAG_TRACKING_ID=G-XXXXXXXXXX
+```
+
+### 在哪里查看访问情况
+
+登录 Google Analytics 后，可以在以下位置查看：
+
+- 实时：查看当前正在访问站点的用户。
+- 报告 > 生命周期 > 互动度：查看页面访问、停留、事件等。
+- 报告 > 用户 > 用户属性：查看地区、设备、浏览器等访问来源特征。
+- 探索：自定义分析页面路径、来源渠道和访问趋势。
+
+### 注意事项
+
+- Docusaurus 的 gtag 插件只在生产环境启用，本地 `npm run start` 不会发送统计数据。
+- 如果未设置 `GTAG_TRACKING_ID`，构建仍会正常进行，只是不注入统计脚本。
+- 统计数据通常不会立刻完整出现在标准报表中，实时报告会更快显示验证结果。
+
 ## 维护提示
 
 - 修改导航入口：编辑 `docusaurus.config.js` 的 `themeConfig.navbar.items`。
