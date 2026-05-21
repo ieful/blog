@@ -10,6 +10,15 @@ const gtagTrackingID = process.env.GTAG_TRACKING_ID;
 const config = {
   plugins: [
     [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'songs',
+        path: './music',
+        routeBasePath: 'music',
+        sidebarPath: require.resolve('./sidebarsSongs.js'),
+      },
+    ],
+    [
       '@docusaurus/plugin-content-blog',
       {
         id: 'dailyclaw',
@@ -113,6 +122,13 @@ const config = {
           },
           {to: '/blog', label: '博客', position: 'left'},
           {to: '/dailyclaw', label: 'Claw日报🦞', position: 'left'},
+          {
+            type: 'docSidebar',
+            docsPluginId: 'songs',
+            sidebarId: 'songsSidebar',
+            position: 'left',
+            label: '听歌'
+          },
           {
             type: 'docSidebar',
             sidebarId: 'meSidebar', // 读书目录

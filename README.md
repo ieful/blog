@@ -19,6 +19,7 @@
 ├── blog/                  # 默认博客内容，访问路径为 /blog
 ├── dailyclaw/             # 独立的 Claw 日报博客，访问路径为 /dailyclaw
 ├── docs/                  # 文档知识库主体，访问路径为 /docs
+├── music/                 # 独立的听歌文档区，访问路径为 /music
 ├── src/
 │   ├── components/        # React 组件
 │   ├── css/               # 全局样式
@@ -44,6 +45,16 @@ Docusaurus classic preset 自带的默认博客目录，适合放更完整的主
 ### `dailyclaw/`
 
 额外注册的博客实例，配置在 `docusaurus.config.js` 的 `plugins` 中。它独立于默认博客，主要承载 Claw 日报、AI 简报和 OpenClaw 相关文章。
+
+### `music/`
+
+独立的听歌文档区，配置为单独的 Docusaurus docs 插件，并挂载到顶部导航“听歌”。文件名和目录名可以继续保持中文或歌手名，但每首歌通过 frontmatter 的 `slug` 生成英文访问路径，例如：
+
+```text
+music/A Lin/给我一个理由忘记你.mdx -> /music/a-lin/track-001
+```
+
+这样可以保留本地文件的可读性，同时避免浏览器地址栏出现中文路径。
 
 ### `static/`
 
@@ -244,5 +255,6 @@ GTAG_TRACKING_ID=G-XXXXXXXXXX
 - 新增知识库文章：放入 `docs/`。
 - 新增默认博客文章：放入 `blog/`。
 - 新增 Claw 日报：放入 `dailyclaw/`。
+- 新增听歌页面：放入 `music/`，并补充英文 `slug`。
 - 引用图片、音频、视频等资源：优先放入 `static/`，再通过根路径引用。
 - 修改首页：编辑 `src/pages/index.tsx` 和 `src/pages/index.module.css`。
