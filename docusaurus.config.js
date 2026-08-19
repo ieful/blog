@@ -122,6 +122,7 @@ const config = {
           },
           {to: '/blog', label: '博客', position: 'left'},
           {to: '/dailyclaw', label: 'Claw日报🦞', position: 'left'},
+          {to: '/demo', label: 'Demo', position: 'left'},
           {
             type: 'docSidebar',
             docsPluginId: 'songs',
